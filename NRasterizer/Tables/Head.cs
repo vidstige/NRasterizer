@@ -22,7 +22,7 @@ namespace NRasterizer.Tables
             var fontRevision = input.ReadUInt32();
             var checkSumAdjustment = input.ReadUInt32();
             var magicNumber = input.ReadUInt32();
-            if (magicNumber != 0x5F0F3CF5) throw new ApplicationException("Invalid magic number!" + magicNumber.ToString("x"));
+            if (magicNumber != 0x5F0F3CF5) throw new NRasterizerException("Invalid magic number!" + magicNumber.ToString("x"));
 
             var flags = input.ReadUInt16();
             _unitsPerEm = input.ReadUInt16(); // valid is 16 to 16384

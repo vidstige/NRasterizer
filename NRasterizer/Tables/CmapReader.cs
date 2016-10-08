@@ -47,7 +47,7 @@ namespace NRasterizer.Tables
 
                 return new CharacterMap(segCount, startCode, endCode, idDelta, idRangeOffset, glyphIdArray);
             }
-            throw new ApplicationException("Unknown cmap subtable: " + format); // TODO: Replace all applicationexceptions
+            throw new NRasterizerException("Unknown cmap subtable: " + format);
         }
 
         private class CMapEntry

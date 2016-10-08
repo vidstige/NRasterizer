@@ -38,7 +38,7 @@ namespace NRasterizer.IO
         }
 
         public override Stream BaseStream { get { return base.BaseStream; } }
-        public override void Close() { base.Close(); }
+        //public override void Close() { base.Close(); }
 
         public override int PeekChar() { throw new NotImplementedException(); }
         public override int Read() { throw new NotImplementedException(); }
