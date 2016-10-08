@@ -1,6 +1,8 @@
 NRasterizer
 ===========
 
+![build-status](https://travis-ci.org/vidstige/NRasterizer.svg?branch=master)
+
 Simple and clean TrueType font renderer written purely in c#.
 
  * Loads .ttf files.
@@ -11,3 +13,7 @@ Screenshots
 Some screenshots of the current master.
 
 ![Screenshot](screenshots/1.png "Screenshot 1") 
+
+Author
+------
+Samuel Carlsson <samuel.carlsson@gmail.com>
