@@ -100,7 +100,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NRasterizer\NRasterizer.csproj">
+    <ProjectReference Include="..\NOpenType\NOpenType.csproj">
       <Project>{5bd9866c-9022-4ad8-bb96-efed35c8324f}</Project>
       <Name>notf</Name>
     </ProjectReference>
