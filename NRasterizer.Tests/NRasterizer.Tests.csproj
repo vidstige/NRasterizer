@@ -38,6 +38,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Given_Glyph.cs" />
@@ -45,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NRasterizer\NRasterizer.csproj">
-      <Project>{5bd9866c-9022-4ad8-bb96-efed35c8324f}</Project>
+      <Project>{5BD9866C-9022-4AD8-BB96-EFED35C8324F}</Project>
       <Name>NRasterizer</Name>
     </ProjectReference>
   </ItemGroup>
@@ -57,4 +60,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

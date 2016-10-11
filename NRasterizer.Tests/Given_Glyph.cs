@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace NRasterizer.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class Given_Glyph
     {
         private List<Segment> _segments;
@@ -28,7 +28,7 @@ namespace NRasterizer.Tests
         {
             var segment = _segments[_segmentIndex];
             Assert.IsNotNull(segment);
-            Assert.IsInstanceOfType(segment, typeof(Line));
+            Assert.IsAssignableFrom<Line>(segment);
             var line = (Line)segment;
             Assert.AreEqual(_x, line.x0);
             Assert.AreEqual(_y, line.y0);
@@ -43,7 +43,7 @@ namespace NRasterizer.Tests
         {
             var segment = _segments[_segmentIndex];
             Assert.IsNotNull(segment);
-            Assert.IsInstanceOfType(segment, typeof(Bezier));
+            Assert.IsAssignableFrom<Bezier>(segment);
             var bezier = (Bezier)segment;
             Assert.AreEqual(_x, bezier.x0);
             Assert.AreEqual(_y, bezier.y0);
@@ -61,7 +61,7 @@ namespace NRasterizer.Tests
             Assert.AreEqual(_segmentIndex, _segments.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void With_Four_Line_Countour()
         {
             var x = new short[] { 0, 128, 128, 0 };
@@ -78,7 +78,7 @@ namespace NRasterizer.Tests
             AssertContourDone();
         }
 
-        [TestMethod]
+        [Test]
         public void With_Line_And_Bezier_Countour()
         {
             var x = new short[] { 0, 128, 128, 0 };
