@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-cd NRasterizer/
+cd NOpenType/
 dotnet restore
 dotnet build
