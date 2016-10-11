@@ -47,9 +47,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NRasterizer\NRasterizer.csproj">
+    <ProjectReference Include="..\NRasterizer\NOpenType.csproj">
       <Project>{5BD9866C-9022-4AD8-BB96-EFED35C8324F}</Project>
-      <Name>NRasterizer</Name>
+      <Name>NOpenType</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

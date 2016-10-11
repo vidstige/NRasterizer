@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRasterizer", "NRasterizer\NRasterizer.csproj", "{5BD9866C-9022-4AD8-BB96-EFED35C8324F}"
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NOpenType", "NRasterizer\NOpenType.csproj", "{5BD9866C-9022-4AD8-BB96-EFED35C8324F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{B73ED844-1048-4A82-BAD9-F13311E4AA94}"
 EndProject
