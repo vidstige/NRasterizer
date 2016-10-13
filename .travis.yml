@@ -7,4 +7,10 @@ install:
 script:
   - xbuild /p:Configuration=Release NRasterizer.sln
   - mono ./testrunner/NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe ./NRasterizer.Tests/bin/Release/NRasterizer.Tests.dll
- 
+  - mono NRasterizer.CLI/bin/Release/NRasterizer.CLI.exe Sample/segoeui.ttf samples/cefhijl.png
+
+addons:
+  artifacts:
+    paths:
+        - samples/cefhijl.png 
+    s3_region: "ireland"
