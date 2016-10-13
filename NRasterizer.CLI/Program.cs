@@ -64,11 +64,12 @@ namespace NRasterizer.CLI
 
         public static void Main(string[] args)
         {
-            string fontPath = args[0];
-            string target = args[1];
+            var fontPath = new FileInfo(args[0]);
+            var target = new FileInfo(args[1]);
 
             var program = new NRasterizerProgram();
-            program.Draw(new FileInfo(fontPath), new FileInfo(target));
+            target.Directory.Create();
+            program.Draw(fontPath, target);
         }
     }
 }

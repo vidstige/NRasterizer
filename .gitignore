@@ -8,6 +8,8 @@ project.lock.json
 # NUnit
 TestResult.xml
 
+# Font Render samples.
+/samples/
 
 # Windows image file caches
 Thumbs.db
