@@ -12,5 +12,5 @@ script:
 addons:
   artifacts:
     paths:
-        - samples/cefhijl.png 
-    s3_region: "ireland"
+        - ./samples/cefhijl.png
+
