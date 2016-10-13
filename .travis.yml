@@ -13,4 +13,4 @@ addons:
   artifacts:
     paths:
         - ./samples/cefhijl.png
-
+    target_paths: $TRAVIS_PULL_REQUEST_BRANCH
