@@ -4,25 +4,18 @@ using System.Collections.Generic;
 
 namespace NRasterizer
 {
-    public abstract class GlyphPathBuilderBase
+    public class GlyphPathBuilderBase
     {
+        private readonly IGlyphRasterizer _rasterizer;
         readonly Typeface _typeface;
         const int pointsPerInch = 72;
 
-        public GlyphPathBuilderBase(Typeface typeface)
+        public GlyphPathBuilderBase(Typeface typeface, IGlyphRasterizer rasterizer)
         {
             _typeface = typeface;
+            _rasterizer = rasterizer;
         }
         const double FT_RESIZE = 64; //essential to be floating point
-
-        protected abstract void OnBeginRead(int countourCount);
-        protected abstract void OnEndRead();
-        protected abstract void OnCloseFigure();
-        protected abstract void OnCurve3(double p2x, double p2y, double x, double y);
-        protected abstract void OnCurve4(double p2x, double p2y, double p3x, double p3y, double x, double y);
-        protected abstract void OnMoveTo(double x, double y);
-        protected abstract void OnLineTo(double x, double y);
-
 
         void RenderGlyph(ushort[] contours, FtPoint[] ftpoints, int[] flags)
         {
@@ -34,7 +27,7 @@ namespace NRasterizer
             int cpoint_index = 0;
             int todoContourCount = contours.Length;
             //-----------------------------------
-            OnBeginRead(todoContourCount);
+            _rasterizer.BeginRead(todoContourCount);
             //-----------------------------------
             double lastMoveX = 0;
             double lastMoveY = 0;
@@ -63,13 +56,13 @@ namespace NRasterizer
                             {
                                 case 1:
                                     {
-                                        OnCurve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                        _rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                             vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
                                     }
                                     break;
                                 case 2:
                                     {
-                                        OnCurve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                        _rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                             thirdControlPoint.x / FT_RESIZE, thirdControlPoint.y / FT_RESIZE,
                                             vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
                                     }
@@ -87,11 +80,11 @@ namespace NRasterizer
                             if (isFirstPoint)
                             {
                                 isFirstPoint = false;
-                                OnMoveTo(lastMoveX = (vpoint.X / FT_RESIZE), lastMoveY = (vpoint.Y / FT_RESIZE));
+                                _rasterizer.MoveTo(lastMoveX = (vpoint.X / FT_RESIZE), lastMoveY = (vpoint.Y / FT_RESIZE));
                             }
                             else
                             {
-                                OnLineTo(vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
+                                _rasterizer.LineTo(vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
                             }
 
                             //if (has_dropout)
@@ -138,7 +131,7 @@ namespace NRasterizer
                                         FtPointD mid = GetMidPoint(secondControlPoint, vpoint);
                                         //----------
                                         //generate curve3
-                                        OnCurve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                        _rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                             mid.x / FT_RESIZE, mid.y / FT_RESIZE);
                                         //------------------------
                                         controlPointCount--;
@@ -169,13 +162,13 @@ namespace NRasterizer
                         case 0: break;
                         case 1:
                             {
-                                OnCurve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                _rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                     lastMoveX, lastMoveY);
                             }
                             break;
                         case 2:
                             {
-                                OnCurve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                _rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                     thirdControlPoint.x / FT_RESIZE, thirdControlPoint.y / FT_RESIZE,
                                     lastMoveX, lastMoveY);
                             }
@@ -186,12 +179,12 @@ namespace NRasterizer
                     justFromCurveMode = false;
                     controlPointCount = 0;
                 }
-                OnCloseFigure();
+                _rasterizer.CloseFigure();
                 //--------                   
                 startContour++;
                 todoContourCount--;
             }
-            OnEndRead();
+            _rasterizer.EndRead();
         }
         static FtPointD GetMidPoint(FtPoint v1, FtPoint v2)
         {
