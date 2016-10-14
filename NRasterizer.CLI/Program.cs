@@ -3,6 +3,7 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using NRasterizer.Rasterizer;
 
 namespace NRasterizer.CLI
 {
@@ -10,7 +11,7 @@ namespace NRasterizer.CLI
     {
         private void Draw(Raster raster, Typeface typeface, string text, int size)
         {
-            new Rasterizer(typeface).Rasterize(text, size, raster, false);
+            new Rasterizer.Rasterizer(typeface).Rasterize(text, size, raster, false);
         }
 
         private static Rectangle Entire(Bitmap b)

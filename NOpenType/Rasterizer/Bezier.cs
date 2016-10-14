@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NRasterizer
+namespace NRasterizer.Rasterizer
 {
     public class Bezier: Segment
     {

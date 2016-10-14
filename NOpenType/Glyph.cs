@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using NRasterizer.Rasterizer;
 
 namespace NRasterizer
 {
