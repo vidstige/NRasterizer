@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using NRasterizer.Rasterizer;
 
 namespace NRasterizer
 {
@@ -131,5 +132,6 @@ namespace NRasterizer
         public short[] X { get { return _x; } }
         public short[] Y { get { return _y; } }
         public bool[] On { get { return _on; } }
+        public ushort[] EndPoints { get { return _contourEndPoints; } }
     }
 }

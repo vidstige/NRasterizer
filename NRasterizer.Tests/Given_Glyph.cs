@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
+using NRasterizer.Rasterizer;
 
 namespace NRasterizer.Tests
 {

@@ -1,4 +1,4 @@
-﻿namespace NRasterizer
+﻿namespace NRasterizer.Rasterizer
 {
     public interface Segment
     {

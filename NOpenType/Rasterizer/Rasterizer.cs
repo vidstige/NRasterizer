@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NRasterizer
+namespace NRasterizer.Rasterizer
 {
     public class Rasterizer
     {
