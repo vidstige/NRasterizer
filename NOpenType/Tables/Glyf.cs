@@ -18,6 +18,11 @@ namespace NRasterizer.Tables
             YSignOrSame = 32
         }
 
+        private static bool HasFlag(Flag haystack, Flag needle) 
+        {
+            return (haystack & needle) != 0;
+        }
+
         private static Flag[] ReadFlags(BinaryReader input, int flagCount)
         {
             var result = new Flag[flagCount];
@@ -33,7 +38,7 @@ namespace NRasterizer.Tables
                 else
                 {
                     flag = (Flag)input.ReadByte();
-                    if (flag.HasFlag(Flag.Repeat))
+                    if (HasFlag(flag, Flag.Repeat))
                     {
                         repeatCount = input.ReadByte();
                     }
@@ -50,14 +55,14 @@ namespace NRasterizer.Tables
             for (int i = 0; i < pointCount; i++)
             {
                 int dx;
-                if (flags[i].HasFlag(isByte))
+                if (HasFlag(flags[i], isByte))
                 {
                     var b = input.ReadByte();
-                    dx = flags[i].HasFlag(signOrSame) ? b : -b;
+                    dx = HasFlag(flags[i], signOrSame) ? b : -b;
                 }
                 else
                 {
-                    if (flags[i].HasFlag(signOrSame))
+                    if (HasFlag(signOrSame, flags[i]))
                     {
                         dx = 0;
                     }
@@ -90,7 +95,7 @@ namespace NRasterizer.Tables
             var xs = ReadCoordinates(input, pointCount, flags, Flag.XByte, Flag.XSignOrSame);
             var ys = ReadCoordinates(input, pointCount, flags, Flag.YByte, Flag.YSignOrSame);
 
-            return new Glyph(xs, ys, flags.Select(f => f.HasFlag(Flag.OnCurve)).ToArray(), endPoints, bounds);
+            return new Glyph(xs, ys, flags.Select(f => HasFlag(f, Flag.OnCurve)).ToArray(), endPoints, bounds);
         }
 
         private static Glyph ReadCompositeGlyph(BinaryReader input, int count, Bounds bounds)
