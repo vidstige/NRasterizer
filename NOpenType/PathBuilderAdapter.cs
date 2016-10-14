@@ -22,7 +22,7 @@ namespace NRasterizer
 
     public class FtPoint: Point<float>
     {
-        //public FtPoint(float x, float y): base(x, y) {}
+        public FtPoint(float x, float y): base(x, y) {}
     }
 
     public class FtPointD: Point<double>

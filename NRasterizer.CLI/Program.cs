@@ -63,6 +63,28 @@ namespace NRasterizer.CLI
             }
         }
 
+        void DrawHacky(FileInfo fontPath, FileInfo target)
+        {
+            const int width = 200;
+            const int height = 80;
+
+            using (var input = fontPath.OpenRead())
+            {
+                var typeface = new OpenTypeReader().Read(input);
+                using (Bitmap b = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+                {
+                    using (var g = Graphics.FromImage(b))
+                    {
+                        var rasterizer = new GDIGlyphRasterizer(g);
+                        var renderer = new GlyphPathBuilderBase(typeface, rasterizer);
+                        renderer.Build('c', 36, 72);
+                    }
+                    b.Save(target.FullName, ImageFormat.Png);
+                }
+
+            }
+        }
+
         public static void Main(string[] args)
         {
             var fontPath = new FileInfo(args[0]);
@@ -70,7 +92,9 @@ namespace NRasterizer.CLI
 
             var program = new NRasterizerProgram();
             target.Directory.Create();
-            program.Draw(fontPath, target);
+            //program.Draw(fontPath, target);
+
+            program.DrawHacky(fontPath, target);
         }
     }
 }

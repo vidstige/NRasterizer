@@ -1,6 +1,7 @@
 ﻿//Apache2, 2014-2016,   WinterDev
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NRasterizer
 {
@@ -207,10 +208,15 @@ namespace NRasterizer
 
         void RenderGlyph(Glyph glyph)
         {
-            //ushort[] endPoints;
-            //int[] flags;
-            //FtPoint[] ftpoints = glyph.GetPoints(out endPoints, out flags);
-            //RenderGlyph(endPoints, ftpoints, flags);
+            var xs = glyph.X;
+            var ys = glyph.Y;
+            var ftpoints = new List<FtPoint>();
+            for (int i = 0; i < xs.Length; i++)
+            {
+                ftpoints.Add(new FtPoint(xs[i], ys[i]));
+            }
+            var flags = glyph.On.Select(on => on ? 0 : 1).ToArray();
+            RenderGlyph(glyph.EndPoints, ftpoints.ToArray(), flags);
         }
 
         public void Build(char c, int size, int resolution)
