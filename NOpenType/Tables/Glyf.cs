@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 
 namespace NRasterizer.Tables
 {
+
     internal class Glyf
     {
         [Flags]
-        private enum Flag: byte
+        enum Flag : byte
         {
+            ControlPoint = 0,
             OnCurve = 1,
             XByte = 2,
             YByte = 4,
@@ -18,7 +19,7 @@ namespace NRasterizer.Tables
             YSignOrSame = 32
         }
 
-        private static bool HasFlag(Flag haystack, Flag needle) 
+        private static bool HasFlag(Flag haystack, Flag needle)
         {
             return (haystack & needle) != 0;
         }
@@ -80,7 +81,7 @@ namespace NRasterizer.Tables
         private static Glyph ReadSimpleGlyph(BinaryReader input, int count, Bounds bounds)
         {
             var endPoints = new ushort[count];
-            for (int i=0; i<count; i++)
+            for (int i = 0; i < count; i++)
             {
                 endPoints[i] = input.ReadUInt16();
             }
@@ -95,7 +96,14 @@ namespace NRasterizer.Tables
             var xs = ReadCoordinates(input, pointCount, flags, Flag.XByte, Flag.XSignOrSame);
             var ys = ReadCoordinates(input, pointCount, flags, Flag.YByte, Flag.YSignOrSame);
 
-            return new Glyph(xs, ys, flags.Select(f => HasFlag(f, Flag.OnCurve)).ToArray(), endPoints, bounds);
+            var onCurves = new bool[flags.Length];
+            for (int i = flags.Length - 1; i >= 0; --i)
+            {
+
+                onCurves[i] = (flags[i] & Flag.OnCurve) == Flag.OnCurve;
+            }
+
+            return new Glyph(xs, ys, onCurves, endPoints, bounds);
         }
 
         private static Glyph ReadCompositeGlyph(BinaryReader input, int count, Bounds bounds)
@@ -103,7 +111,7 @@ namespace NRasterizer.Tables
             // TODO: Parse composite glyphs
             return Glyph.Empty;
         }
-        
+
         internal static List<Glyph> From(TableEntry table, GlyphLocations locations)
         {
             var glyphCount = locations.GlyphCount;

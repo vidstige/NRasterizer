@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+ 
 
 namespace NRasterizer
 {
@@ -70,7 +69,16 @@ namespace NRasterizer
             var result = new Instruction[256];
             for (int opcode = 0; opcode < 256; opcode++)
             {
-                result[opcode] = instructions.First(i => i.Matches((byte)opcode));
+                //result[opcode] = instructions.First(i => i.Matches((byte)opcode));
+
+                foreach (Instruction inst in instructions)
+                {
+                    if (inst.Matches((byte)opcode))
+                    {
+                        result[opcode] = inst;
+                        break;
+                    }
+                }
             }
             return result;
         }

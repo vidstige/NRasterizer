@@ -31,12 +31,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bounds.cs" />
@@ -44,6 +38,7 @@
     <Compile Include="Glyph.cs" />
     <Compile Include="Interpreter.cs" />
     <Compile Include="IO\ByteOrderSwappingBinaryReader.cs" />
+    <Compile Include="Net20\ExtensionAttribute.cs" />
     <Compile Include="Tables\BoundsReader.cs" />
     <Compile Include="Tables\CmapReader.cs" />
     <Compile Include="Tables\Glyf.cs" />
@@ -75,7 +70,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Rasterizer\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

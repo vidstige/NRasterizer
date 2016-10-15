@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
 using NRasterizer.Rasterizer;
-
 namespace NRasterizer
 {
+
     internal class Point
     {
         private readonly short _x;
@@ -21,7 +21,7 @@ namespace NRasterizer
         public short Y { get { return _y; } }
         public bool On { get { return _on; } }
     }
-    
+
     public class Glyph
     {
         private readonly short[] _x;
@@ -31,7 +31,7 @@ namespace NRasterizer
         private readonly Bounds _bounds;
 
         public static readonly Glyph Empty = new Glyph(new short[0], new short[0], new bool[0], new ushort[0], Bounds.Zero);
-        
+
         public Glyph(short[] x, short[] y, bool[] on, ushort[] contourEndPoints, Bounds bounds)
         {
             _x = x;
@@ -60,20 +60,47 @@ namespace NRasterizer
             }
         }
 
+        static List<Point> InsertImplicit2(IEnumerable<Point> points)
+        {
+            List<Point> newPointList = new List<Point>();
+            Point previous = null;
+            bool isFirstPoint = true;
+            foreach (Point p in points)
+            {
+                if (isFirstPoint)
+                {
+                    newPointList.Add(previous = p);
+                    isFirstPoint = false;
+                }
+                else
+                {
+                    //others
+                    if (!previous.On && !p.On)
+                    {
+                        newPointList.Add(new Point((short)((previous.X + p.X) / 2), (short)((previous.Y + p.Y) / 2), true));
+                    }
+                    previous = p;
+                    newPointList.Add(p);
+                }
+            }
+
+            return newPointList;
+        }
         private IEnumerable<Point> InsertImplicit(IEnumerable<Point> points)
         {
-            var previous = points.First();
-            yield return previous;
-            foreach (var p in points.Skip(1))
-            {
-                if (!previous.On && !p.On)
-                {
-                    // implicit point on curve
-                    yield return new Point((short)((previous.X + p.X) / 2), (short)((previous.Y + p.Y) / 2), true);
-                }
-                previous = p;
-                yield return p;
-            }
+            throw new System.NotSupportedException();
+            //var previous = points.First();
+            //yield return previous;
+            //foreach (var p in points.Skip(1))
+            //{
+            //    if (!previous.On && !p.On)
+            //    {
+            //        // implicit point on curve
+            //        yield return new Point((short)((previous.X + p.X) / 2), (short)((previous.Y + p.Y) / 2), true);
+            //    }
+            //    previous = p;
+            //    yield return p;
+            //}
         }
 
         private T Circular<T>(List<T> list, int index)
@@ -85,7 +112,7 @@ namespace NRasterizer
             int fontX, int fontY,
             float xOffset, float yOffset, float scaleX, float scaleY)
         {
-            var pts = InsertImplicit(GetContourPoints(contourIndex)).ToList();
+            var pts = InsertImplicit2(GetContourPoints(contourIndex));
 
             var begin = GetContourBegin(contourIndex);
             var end = GetContourEnd(contourIndex);
@@ -121,7 +148,7 @@ namespace NRasterizer
         private int GetContourBegin(int contourIndex)
         {
             if (contourIndex == 0) return 0;
-            return _contourEndPoints[contourIndex - 1]+1;
+            return _contourEndPoints[contourIndex - 1] + 1;
         }
 
         private int GetContourEnd(int contourIndex)
@@ -133,5 +160,6 @@ namespace NRasterizer
         public short[] Y { get { return _y; } }
         public bool[] On { get { return _on; } }
         public ushort[] EndPoints { get { return _contourEndPoints; } }
+
     }
 }

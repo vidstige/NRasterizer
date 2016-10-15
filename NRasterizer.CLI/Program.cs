@@ -28,12 +28,25 @@ namespace NRasterizer.CLI
                 bitmapData = b.LockBits(Entire(b), ImageLockMode.WriteOnly, b.PixelFormat);
                 int si = 0;
                 IntPtr di = bitmapData.Scan0;
-                for (int y = 0; y < b.Height; y++) 
+                for (int y = 0; y < b.Height; y++)
                 {
                     Marshal.Copy(raster.Pixels, si, di, b.Width);
                     si += raster.Stride;
-                    di += bitmapData.Stride;
+                    di = new IntPtr(di.ToInt64() + bitmapData.Stride);
                 }
+
+                //if NET20
+                //unsafe
+                //{
+                //    IntPtr di = bitmapData.Scan0;
+                //    byte* di1 = (byte*)di;
+                //    for (int y = 0; y < b.Height; y++)
+                //    {
+                //        Marshal.Copy(raster.Pixels, si, (IntPtr)di1, b.Width);
+                //        si += raster.Stride;
+                //        di1 += bitmapData.Stride; 
+                //    }
+                //}
             }
             finally
             {
@@ -44,7 +57,7 @@ namespace NRasterizer.CLI
             }
         }
 
-        private void Draw(FileInfo fontPath, FileInfo target) 
+        private void Draw(FileInfo fontPath, FileInfo target)
         {
             const int width = 200;
             const int height = 80;

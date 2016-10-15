@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NRasterizer
 {
@@ -16,7 +13,7 @@ namespace NRasterizer
 
         internal CharacterMap(int segCount, ushort[] startCode, ushort[] endCode, ushort[] idDelta, ushort[] idRangeOffset, ushort[] glyphIdArray)
         {
-            _segCount = segCount;        
+            _segCount = segCount;
             _startCode = startCode;
             _endCode = endCode;
             _idDelta = idDelta;
