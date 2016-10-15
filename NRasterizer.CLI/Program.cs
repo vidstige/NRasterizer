@@ -75,6 +75,7 @@ namespace NRasterizer.CLI
                 {
                     using (var g = Graphics.FromImage(b))
                     {
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                         var rasterizer = new GDIGlyphRasterizer(g);
                         var renderer = new GlyphPathBuilderBase(typeface, rasterizer);
                         renderer.Build('c', 36, 72);
