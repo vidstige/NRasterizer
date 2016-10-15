@@ -5,7 +5,7 @@ namespace NRasterizer.CLI
 {
     public class GDIGlyphRasterizer: IGlyphRasterizer
     {
-        System.Drawing.Drawing2D.GraphicsPath ps = new System.Drawing.Drawing2D.GraphicsPath();
+        System.Drawing.Drawing2D.GraphicsPath ps;
         float lastMoveX;
         float lastMoveY;
         float lastX;
@@ -24,7 +24,7 @@ namespace NRasterizer.CLI
 
         public void BeginRead(int countourCount)
         {
-            ps.Reset();
+            ps = new System.Drawing.Drawing2D.GraphicsPath();
         }
 
         public void EndRead()

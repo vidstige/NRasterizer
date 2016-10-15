@@ -18,8 +18,9 @@ namespace NRasterizer
         }
         const double FT_RESIZE = 64; //essential to be floating point
 
-        void RenderGlyph(ushort[] contours, FtPoint[] ftpoints, int[] flags)
+        void RenderGlyph(float x, float y, ushort[] contours, FtPoint[] ftpoints, int[] flags)
         {
+            var rasterizer = new TranslatingRasterizer(x, y, _rasterizer);
 
             //outline version
             //-----------------------------
@@ -28,7 +29,7 @@ namespace NRasterizer
             int cpoint_index = 0;
             int todoContourCount = contours.Length;
             //-----------------------------------
-            _rasterizer.BeginRead(todoContourCount);
+            rasterizer.BeginRead(todoContourCount);
             //-----------------------------------
             double lastMoveX = 0;
             double lastMoveY = 0;
@@ -57,13 +58,13 @@ namespace NRasterizer
                             {
                                 case 1:
                                     {
-                                        _rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                        rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                             vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
                                     }
                                     break;
                                 case 2:
                                     {
-                                        _rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                        rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                             thirdControlPoint.x / FT_RESIZE, thirdControlPoint.y / FT_RESIZE,
                                             vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
                                     }
@@ -81,11 +82,11 @@ namespace NRasterizer
                             if (isFirstPoint)
                             {
                                 isFirstPoint = false;
-                                _rasterizer.MoveTo(lastMoveX = (vpoint.X / FT_RESIZE), lastMoveY = (vpoint.Y / FT_RESIZE));
+                                rasterizer.MoveTo(lastMoveX = (vpoint.X / FT_RESIZE), lastMoveY = (vpoint.Y / FT_RESIZE));
                             }
                             else
                             {
-                                _rasterizer.LineTo(vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
+                                rasterizer.LineTo(vpoint.X / FT_RESIZE, vpoint.Y / FT_RESIZE);
                             }
 
                             //if (has_dropout)
@@ -132,7 +133,7 @@ namespace NRasterizer
                                         FtPointD mid = GetMidPoint(secondControlPoint, vpoint);
                                         //----------
                                         //generate curve3
-                                        _rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                        rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                             mid.x / FT_RESIZE, mid.y / FT_RESIZE);
                                         //------------------------
                                         controlPointCount--;
@@ -163,13 +164,13 @@ namespace NRasterizer
                         case 0: break;
                         case 1:
                             {
-                                _rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                     lastMoveX, lastMoveY);
                             }
                             break;
                         case 2:
                             {
-                                _rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                     thirdControlPoint.x / FT_RESIZE, thirdControlPoint.y / FT_RESIZE,
                                     lastMoveX, lastMoveY);
                             }
@@ -180,7 +181,7 @@ namespace NRasterizer
                     justFromCurveMode = false;
                     controlPointCount = 0;
                 }
-                _rasterizer.CloseFigure();
+                rasterizer.CloseFigure();
                 //--------                   
                 startContour++;
                 todoContourCount--;
@@ -206,7 +207,7 @@ namespace NRasterizer
                 (v1.y + (double)v2.Y) / 2d);
         }
 
-        void RenderGlyph(Glyph glyph)
+        void RenderGlyph(float x, float y, Glyph glyph)
         {
             var xs = glyph.X;
             var ys = glyph.Y;
@@ -216,13 +217,19 @@ namespace NRasterizer
                 ftpoints.Add(new FtPoint(xs[i], ys[i]));
             }
             var flags = glyph.On.Select(on => on ? 0 : 1).ToArray();
-            RenderGlyph(glyph.EndPoints, ftpoints.ToArray(), flags);
+            RenderGlyph(x, y, glyph.EndPoints, ftpoints.ToArray(), flags);
         }
 
-        public void Build(char c, int size, int resolution)
+        public void Render(int x, int y, string text, int size, int resolution)
         {
-            float scale = (float)(size * resolution) / (pointsPerInch * _typeface.UnitsPerEm);
-            RenderGlyph(_typeface.Lookup(c));
+            float xx = x;
+            float yy = y;
+            foreach (var character in text)
+            {
+                RenderGlyph(xx, yy, _typeface.Lookup(character));
+                xx += _typeface.GetAdvanceWidth(character) / (float)FT_RESIZE;
+                Console.WriteLine(_typeface.GetAdvanceWidth(character));
+            }
         }
     }
 

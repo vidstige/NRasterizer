@@ -63,7 +63,7 @@ namespace NRasterizer.CLI
             }
         }
 
-        void DrawHacky(FileInfo fontPath, FileInfo target)
+        void DrawHacky(FileInfo fontPath, FileInfo target, string text)
         {
             const int width = 200;
             const int height = 80;
@@ -78,7 +78,7 @@ namespace NRasterizer.CLI
                         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                         var rasterizer = new GDIGlyphRasterizer(g);
                         var renderer = new GlyphPathBuilderBase(typeface, rasterizer);
-                        renderer.Build('c', 36, 72);
+                        renderer.Render(0, 0, text, 36, 72);
                     }
                     b.Save(target.FullName, ImageFormat.Png);
                 }
@@ -90,12 +90,13 @@ namespace NRasterizer.CLI
         {
             var fontPath = new FileInfo(args[0]);
             var target = new FileInfo(args[1]);
+            var text = args[2];
 
             var program = new NRasterizerProgram();
             target.Directory.Create();
             //program.Draw(fontPath, target);
 
-            program.DrawHacky(fontPath, target);
+            program.DrawHacky(fontPath, target, text);
         }
     }
 }
