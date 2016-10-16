@@ -7,15 +7,15 @@ namespace NRasterizer
     public class Renderer
     {
         private readonly IGlyphRasterizer _rasterizer;
-        readonly Typeface _typeface;
-        const int pointsPerInch = 72;
+        private readonly Typeface _typeface;
+        private const int pointsPerInch = 72;
+        private const double FT_RESIZE = 64; //essential to be floating point
 
         public Renderer(Typeface typeface, IGlyphRasterizer rasterizer)
         {
             _typeface = typeface;
             _rasterizer = rasterizer;
         }
-        const double FT_RESIZE = 64; //essential to be floating point
 
         void RenderGlyph(float x, float y, ushort[] contours, short[] xs, short[] ys, bool[] onCurves)
         {
@@ -172,20 +172,20 @@ namespace NRasterizer
             _rasterizer.EndRead();
         }
 
-        static FtPointD GetMidPoint(FtPointD v1, int v2x, int v2y)
+        private static FtPointD GetMidPoint(FtPointD v1, int v2x, int v2y)
         {
             return new FtPointD(
                 ((double)v1.X + (double)v2x) / 2d,
                 ((double)v1.Y + (double)v2y) / 2d);
         }
-        static FtPointD GetMidPoint(FtPointD v1, FtPointD v2)
+        private static FtPointD GetMidPoint(FtPointD v1, FtPointD v2)
         {
             return new FtPointD(
                 ((double)v1.x + (double)v2.x) / 2d,
                 ((double)v1.y + (double)v2.y) / 2d);
         }
 
-        void RenderGlyph(float x, float y, Glyph glyph)
+        private void RenderGlyph(float x, float y, Glyph glyph)
         {
             RenderGlyph(x, y, glyph.EndPoints, glyph.X, glyph.Y, glyph.On);
         }
