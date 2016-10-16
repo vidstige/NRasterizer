@@ -31,15 +31,14 @@ namespace NRasterizer
             int npoints = xs.Length;
             int startContour = 0;
             int cpoint_index = 0;
-            int todoContourCount = contours.Length;
             //-----------------------------------
-            rasterizer.BeginRead(todoContourCount);
+            rasterizer.BeginRead(contours.Length);
             //-----------------------------------
             double lastMoveX = 0;
             double lastMoveY = 0;
 
             int controlPointCount = 0;
-            while (todoContourCount > 0)
+            for (int i = 0; i < contours.Length; i++)
             {
                 int nextContour = contours[startContour] + 1;
                 bool isFirstPoint = true;
@@ -172,7 +171,6 @@ namespace NRasterizer
                 rasterizer.CloseFigure();
                 //--------                   
                 startContour++;
-                todoContourCount--;
             }
             _rasterizer.EndRead();
         }
