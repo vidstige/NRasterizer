@@ -4,13 +4,13 @@ using FtPointD = NRasterizer.Point<double>;
 
 namespace NRasterizer
 {
-    public class GlyphPathBuilderBase
+    public class Renderer
     {
         private readonly IGlyphRasterizer _rasterizer;
         readonly Typeface _typeface;
         const int pointsPerInch = 72;
 
-        public GlyphPathBuilderBase(Typeface typeface, IGlyphRasterizer rasterizer)
+        public Renderer(Typeface typeface, IGlyphRasterizer rasterizer)
         {
             _typeface = typeface;
             _rasterizer = rasterizer;

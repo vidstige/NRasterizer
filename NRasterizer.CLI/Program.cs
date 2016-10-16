@@ -90,7 +90,7 @@ namespace NRasterizer.CLI
                     {
                         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                         var rasterizer = new GDIGlyphRasterizer(g);
-                        var renderer = new GlyphPathBuilderBase(typeface, rasterizer);
+                        var renderer = new Renderer(typeface, rasterizer);
                         renderer.Render(0, 0, text, 36, 72);
                     }
                     b.Save(target.FullName, ImageFormat.Png);
