@@ -30,7 +30,7 @@ namespace NRasterizer.Tables
                 var searchRange = input.ReadUInt16();
                 var entrySelector = input.ReadUInt16();
                 var rangeShift = input.ReadUInt16();
-                
+
                 var segCount = segCountX2 / 2;
 
                 var endCode = ReadUInt16Array(input, segCount); // last = 0xffff. What does that mean??
@@ -42,14 +42,33 @@ namespace NRasterizer.Tables
                 var idRangeOffset = ReadUInt16Array(input, segCount);
 
                 // I want to thank Microsoft for not giving a simple count on the glyphIdArray
-                var glyphIdArrayLength = (int)((input.BaseStream.Position - tableStart) / sizeof(UInt16));
+                //var glyphIdArrayLength = (int)((input.BaseStream.Position - tableStart) / sizeof(UInt16));
+                int glyphIdArrayLength = FindGlyphIdArrayLenInBytes(idRangeOffset) / 2;
                 var glyphIdArray = ReadUInt16Array(input, glyphIdArrayLength);
 
                 return new CharacterMap(segCount, startCode, endCode, idDelta, idRangeOffset, glyphIdArray);
             }
             throw new NRasterizerException("Unknown cmap subtable: " + format);
         }
-
+        static int FindGlyphIdArrayLenInBytes(ushort[] idRangeOffset)
+        {
+            //1. find max OffsetValue (in bytes unit)
+            //this is the possible value to reach from the idRangeOffsetRecord 
+            ushort max = 0;
+            int foundAt = 0;
+            for (int i = idRangeOffset.Length - 1; i >= 0; --i)
+            {
+                ushort off = idRangeOffset[i];
+                if (off > max)
+                {
+                    max = off;
+                    foundAt = i;
+                }
+            }
+            //----------------------------
+            //2. then offset with current found record
+            return max - (foundAt * 2); //*2 = to byte unit 
+        }
         private class CMapEntry
         {
             private readonly UInt16 _platformId;
