@@ -17,9 +17,14 @@ namespace NRasterizer
             _rasterizer = rasterizer;
         }
 
-        void RenderGlyph(float x, float y, ushort[] contours, short[] xs, short[] ys, bool[] onCurves)
+        void RenderGlyph(float x, float y, Glyph glyph)
         {
             var rasterizer = new TranslatingRasterizer(x, y, _rasterizer);
+
+            ushort[] contours = glyph.EndPoints;
+            short[] xs = glyph.X;
+            short[] ys = glyph.Y;
+            bool[] onCurves = glyph.On;
 
             //outline version
             //-----------------------------
@@ -178,16 +183,12 @@ namespace NRasterizer
                 ((double)v1.X + (double)v2x) / 2d,
                 ((double)v1.Y + (double)v2y) / 2d);
         }
+
         private static FtPointD GetMidPoint(FtPointD v1, FtPointD v2)
         {
             return new FtPointD(
                 ((double)v1.x + (double)v2.x) / 2d,
                 ((double)v1.y + (double)v2.y) / 2d);
-        }
-
-        private void RenderGlyph(float x, float y, Glyph glyph)
-        {
-            RenderGlyph(x, y, glyph.EndPoints, glyph.X, glyph.Y, glyph.On);
         }
 
         public void Render(int x, int y, string text, int size, int resolution)
@@ -198,7 +199,6 @@ namespace NRasterizer
             {
                 RenderGlyph(xx, yy, _typeface.Lookup(character));
                 xx += _typeface.GetAdvanceWidth(character) / (float)FT_RESIZE;
-                Console.WriteLine(_typeface.GetAdvanceWidth(character));
             }
         }
     }
