@@ -51,9 +51,6 @@ namespace NRasterizer
 
                     short vpoint_x = xs[cpoint_index];
                     short vpoint_y = ys[cpoint_index];
-                    //int vtag = (int)flags[cpoint_index] & 0x1;
-                    //bool has_dropout = (((vtag >> 2) & 0x1) != 0);
-                    //int dropoutMode = vtag >> 3;
                     if (onCurves[cpoint_index])
                     {
                         //on curve
@@ -93,15 +90,6 @@ namespace NRasterizer
                             {
                                 _rasterizer.LineTo(vpoint_x / FT_RESIZE, vpoint_y / FT_RESIZE);
                             }
-
-                            //if (has_dropout)
-                            //{
-                            //    //printf("[%d] on,dropoutMode=%d: %d,y:%d \n", mm, dropoutMode, vpoint.x, vpoint.y);
-                            //}
-                            //else
-                            //{
-                            //    //printf("[%d] on,x: %d,y:%d \n", mm, vpoint.x, vpoint.y);
-                            //}
                         }
                     }
                     else
@@ -132,7 +120,7 @@ namespace NRasterizer
                                 break;
                             default:
                                 {
-                                    throw new NotSupportedException();
+                                    throw new NotSupportedException("Too many control points");
                                 }
                                 break;
                         }
@@ -163,7 +151,7 @@ namespace NRasterizer
                             }
                             break;
                         default:
-                            { throw new NotSupportedException(); }
+                            { throw new NotSupportedException("Too many control points"); }
                     }
                     justFromCurveMode = false;
                     controlPointCount = 0;
