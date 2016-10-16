@@ -15,7 +15,7 @@ namespace NRasterizer.Tests
 
         private void EatContour(Glyph glyph, int contourIndex)
         {
-            _segments = glyph.GetContourIterator(contourIndex, 0, 0, 0, 0, 1, 1).ToList();
+            _segments = GlyphHelpers.GetContourIterator(glyph, contourIndex, 0, 0, 0, 0, 1, 1).ToList();
             _segmentIndex = 0;
         }
 
