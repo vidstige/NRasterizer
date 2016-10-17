@@ -2,64 +2,57 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using NRasterizer.Rasterizer;
+using Moq;
 
 namespace NRasterizer.Tests
 {
     [TestFixture]
     public class Given_Glyph
     {
-        private List<Segment> _segments;
-        private int _segmentIndex;
-        private int _x;
-        private int _y;
+        private Renderer _renderer;
+        private Mock<IGlyphRasterizer> _mock;
+        private MockSequence _sequence;
 
-        private void EatContour(Glyph glyph, int contourIndex)
+        [SetUp]
+        public void SetUp()
         {
-            _segments = GlyphHelpers.GetContourIterator(glyph, contourIndex, 0, 0, 0, 0, 1, 1).ToList();
-            _segmentIndex = 0;
+            _mock = new Mock<IGlyphRasterizer>(MockBehavior.Strict);
+            _sequence = new MockSequence();
+            _mock.InSequence(_sequence).Setup(r => r.BeginRead(1));
+            _renderer = new Renderer(null, _mock.Object);
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            _mock.VerifyAll();
+        }
+
+        private void Render(Glyph glyph)
+        {
+            _renderer.RenderGlyph(0, 0, glyph);
         }
 
         private void StartAt(int x, int y)
-        {
-            _x = x;
-            _y = y;
+        {   
+            _mock.InSequence(_sequence).Setup(d => d.MoveTo(x, y));
         }
 
         private void AssertLineTo(int x, int y)
         {
-            var segment = _segments[_segmentIndex];
-            Assert.IsNotNull(segment);
-            Assert.IsAssignableFrom<Line>(segment);
-            var line = (Line)segment;
-            Assert.AreEqual(_x, line.x0);
-            Assert.AreEqual(_y, line.y0);
-            Assert.AreEqual(x, line.x1);
-            Assert.AreEqual(y, line.y1);
-            _x = x;
-            _y = y;
-            _segmentIndex++;
+            _mock.InSequence(_sequence).Setup(d => d.LineTo(x, y));
         }
 
         private void AssertBezierTo(int cx, int cy, int endx, int endy)
         {
-            var segment = _segments[_segmentIndex];
-            Assert.IsNotNull(segment);
-            Assert.IsAssignableFrom<Bezier>(segment);
-            var bezier = (Bezier)segment;
-            Assert.AreEqual(_x, bezier.x0);
-            Assert.AreEqual(_y, bezier.y0);
-            Assert.AreEqual(cx, bezier.x1);
-            Assert.AreEqual(cy, bezier.y1);
-            Assert.AreEqual(endx, bezier.x2);
-            Assert.AreEqual(endy, bezier.y2);
-            _x = endx;
-            _y = endy;
-            _segmentIndex++;
+            _mock.InSequence(_sequence).Setup(d => d.Curve3(cx, cy, endx, endy));
         }
 
         private void AssertContourDone()
         {
-            Assert.AreEqual(_segmentIndex, _segments.Count);
+            //_mock.InSequence(_sequence).Setup(d => d.CloseFigure()).Callback(() => System.Console.WriteLine("called"));
+            _mock.Setup(d => d.CloseFigure());
+            _mock.Setup(d => d.EndRead());
         }
 
         [Test]
@@ -69,14 +62,14 @@ namespace NRasterizer.Tests
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, true, true };
 
-            EatContour(new Glyph(x, y, on, new ushort[] { 3 }, null), 0);
-
             StartAt(0, 0);
-            AssertLineTo(128, 0);
-            AssertLineTo(128, 128);
-            AssertLineTo(0, 128);
+            AssertLineTo(2, 0);
+            AssertLineTo(2, 2);
+            AssertLineTo(0, 2);
             AssertLineTo(0, 0);
             AssertContourDone();
+
+            Render(new Glyph(x, y, on, new ushort[] { 3 }, null));
         }
 
         [Test]
@@ -86,13 +79,13 @@ namespace NRasterizer.Tests
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, false, true };
 
-            EatContour(new Glyph(x, y, on, new ushort[] { 3 }, null), 0);
-
             StartAt(0, 0);
-            AssertLineTo(128, 0);
-            AssertBezierTo(128, 128, 0, 128);
+            AssertLineTo(2, 0);
+            AssertBezierTo(2, 2, 0, 2);
             AssertLineTo(0, 0);
             AssertContourDone();
+
+            Render(new Glyph(x, y, on, new ushort[] { 3 }, null));
         }
     }
 }

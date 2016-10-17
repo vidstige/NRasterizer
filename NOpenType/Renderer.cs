@@ -31,7 +31,7 @@ namespace NRasterizer
             _rasterizer = rasterizer;
         }
 
-        void RenderGlyph(float x, float y, Glyph glyph)
+        public void RenderGlyph(float x, float y, Glyph glyph)
         {
             var rasterizer = new TranslatingRasterizer(x, y, _rasterizer);
 
