@@ -72,7 +72,7 @@ namespace NRasterizer
                             {
                                 case 1:
                                     {
-                                        _rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
+                                        rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
                                             vpoint_x / FT_RESIZE, vpoint_y / FT_RESIZE);
                                     }
                                     break;
@@ -96,11 +96,11 @@ namespace NRasterizer
                             if (isFirstPoint)
                             {
                                 isFirstPoint = false;
-                                _rasterizer.MoveTo(lastMoveX = (vpoint_x / FT_RESIZE), lastMoveY = (vpoint_y / FT_RESIZE));
+                                rasterizer.MoveTo(lastMoveX = (vpoint_x / FT_RESIZE), lastMoveY = (vpoint_y / FT_RESIZE));
                             }
                             else
                             {
-                                _rasterizer.LineTo(vpoint_x / FT_RESIZE, vpoint_y / FT_RESIZE);
+                                rasterizer.LineTo(vpoint_x / FT_RESIZE, vpoint_y / FT_RESIZE);
                             }
                         }
                     }
@@ -171,7 +171,7 @@ namespace NRasterizer
                 //--------                   
                 startContour++;
             }
-            _rasterizer.EndRead();
+            rasterizer.EndRead();
         }
 
         private static Point<double> GetMidPoint(Point<double> v1, int v2x, int v2y)
