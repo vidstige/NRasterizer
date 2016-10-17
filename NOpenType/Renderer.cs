@@ -72,15 +72,22 @@ namespace NRasterizer
                             {
                                 case 1:
                                     {
-                                        rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
-                                            vpoint_x / FT_RESIZE, vpoint_y / FT_RESIZE);
+                                        rasterizer.Curve3(
+                                            secondControlPoint.x / FT_RESIZE,
+                                            (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
+                                            vpoint_x / FT_RESIZE,
+                                            (EmSquare.Size - vpoint_y) / FT_RESIZE);
                                     }
                                     break;
                                 case 2:
                                     {
-                                        rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
-                                            thirdControlPoint.x / FT_RESIZE, thirdControlPoint.y / FT_RESIZE,
-                                            vpoint_x / FT_RESIZE, vpoint_y / FT_RESIZE);
+                                        rasterizer.Curve4(
+                                            secondControlPoint.x / FT_RESIZE, 
+                                            (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
+                                            thirdControlPoint.x / FT_RESIZE,
+                                            (EmSquare.Size - thirdControlPoint.y) / FT_RESIZE,
+                                            vpoint_x / FT_RESIZE,
+                                            (EmSquare.Size - vpoint_y) / FT_RESIZE);
                                     }
                                     break;
                                 default:
@@ -96,11 +103,15 @@ namespace NRasterizer
                             if (isFirstPoint)
                             {
                                 isFirstPoint = false;
-                                rasterizer.MoveTo(lastMoveX = (vpoint_x / FT_RESIZE), lastMoveY = (vpoint_y / FT_RESIZE));
+                                rasterizer.MoveTo(
+                                    lastMoveX = (vpoint_x / FT_RESIZE),
+                                    lastMoveY = ((EmSquare.Size - vpoint_y) / FT_RESIZE));
                             }
                             else
                             {
-                                rasterizer.LineTo(vpoint_x / FT_RESIZE, vpoint_y / FT_RESIZE);
+                                rasterizer.LineTo(
+                                    vpoint_x / FT_RESIZE,
+                                    (EmSquare.Size - vpoint_y) / FT_RESIZE);
                             }
                         }
                     }
@@ -121,8 +132,11 @@ namespace NRasterizer
                                     Point<double> mid = GetMidPoint(secondControlPoint, vpoint_x, vpoint_y);
                                     //----------
                                     //generate curve3
-                                    rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
-                                        mid.x / FT_RESIZE, mid.y / FT_RESIZE);
+                                    rasterizer.Curve3(
+                                        secondControlPoint.x / FT_RESIZE,
+                                        (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
+                                        mid.x / FT_RESIZE,
+                                        (EmSquare.Size - mid.y) / FT_RESIZE);
                                     //------------------------
                                     controlPointCount--;
                                     //------------------------
@@ -150,15 +164,22 @@ namespace NRasterizer
                         case 0: break;
                         case 1:
                             {
-                                rasterizer.Curve3(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
-                                    lastMoveX, lastMoveY);
+                                rasterizer.Curve3(
+                                    secondControlPoint.x / FT_RESIZE,
+                                    (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
+                                    lastMoveX,
+                                    lastMoveY);
                             }
                             break;
                         case 2:
                             {
-                                rasterizer.Curve4(secondControlPoint.x / FT_RESIZE, secondControlPoint.y / FT_RESIZE,
-                                    thirdControlPoint.x / FT_RESIZE, thirdControlPoint.y / FT_RESIZE,
-                                    lastMoveX, lastMoveY);
+                                rasterizer.Curve4(
+                                    secondControlPoint.x / FT_RESIZE,
+                                    (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
+                                    thirdControlPoint.x / FT_RESIZE,
+                                    (EmSquare.Size - thirdControlPoint.y) / FT_RESIZE,
+                                    lastMoveX,
+                                    lastMoveY);
                             }
                             break;
                         default:

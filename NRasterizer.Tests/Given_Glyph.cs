@@ -33,17 +33,17 @@ namespace NRasterizer.Tests
             _renderer.RenderGlyph(0, 0, glyph);
         }
 
-        private void StartAt(int x, int y)
+        private void StartAt(double x, double y)
         {   
             _mock.InSequence(_sequence).Setup(d => d.MoveTo(x, y));
         }
 
-        private void AssertLineTo(int x, int y)
+        private void AssertLineTo(double x, double y)
         {
             _mock.InSequence(_sequence).Setup(d => d.LineTo(x, y));
         }
 
-        private void AssertBezierTo(int cx, int cy, int endx, int endy)
+        private void AssertBezierTo(double cx, double cy, double endx, double endy)
         {
             _mock.InSequence(_sequence).Setup(d => d.Curve3(cx, cy, endx, endy));
         }
@@ -62,11 +62,12 @@ namespace NRasterizer.Tests
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, true, true };
 
-            StartAt(0, 0);
-            AssertLineTo(2, 0);
-            AssertLineTo(2, 2);
-            AssertLineTo(0, 2);
-            AssertLineTo(0, 0);
+            // These coordinates ssytems are flipped in y-direction by EM-square baseline (2048) and then scaled by 1/64
+            StartAt(0, 32);
+            AssertLineTo(2, 32);
+            AssertLineTo(2, 30);
+            AssertLineTo(0, 30);
+            AssertLineTo(0, 32);
             AssertContourDone();
 
             Render(new Glyph(x, y, on, new ushort[] { 3 }, null));
@@ -79,10 +80,11 @@ namespace NRasterizer.Tests
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, false, true };
 
-            StartAt(0, 0);
-            AssertLineTo(2, 0);
-            AssertBezierTo(2, 2, 0, 2);
-            AssertLineTo(0, 0);
+            // These coordinates ssytems are flipped in y-direction by EM-square baseline (2048) and then scaled by 1/64
+            StartAt(0, 32);
+            AssertLineTo(2, 32);
+            AssertBezierTo(2, 30, 0, 30);
+            AssertLineTo(0, 32);
             AssertContourDone();
 
             Render(new Glyph(x, y, on, new ushort[] { 3 }, null));
