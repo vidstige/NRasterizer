@@ -59,7 +59,6 @@
     <Compile Include="Rasterizer\Bezier.cs" />
     <Compile Include="Rasterizer\Rasterizer.cs" />
     <Compile Include="TranslatingRasterizer.cs" />
-    <Compile Include="Rasterizer\Point.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="EmSquare.cs" />
   </ItemGroup>
