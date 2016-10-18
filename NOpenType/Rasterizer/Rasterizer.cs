@@ -50,23 +50,6 @@ namespace NRasterizer.Rasterizer
             return newPointList;
         }
 
-        public static IEnumerable<Point> InsertImplicit(IEnumerable<Point> points)
-        {
-            throw new System.NotSupportedException();
-            //var previous = points.First();
-            //yield return previous;
-            //foreach (var p in points.Skip(1))
-            //{
-            //    if (!previous.On && !p.On)
-            //    {
-            //        // implicit point on curve
-            //        yield return new Point((short)((previous.X + p.X) / 2), (short)((previous.Y + p.Y) / 2), true);
-            //    }
-            //    previous = p;
-            //    yield return p;
-            //}
-        }
-
         public static  T Circular<T>(List<T> list, int index)
         {
             return list[index % list.Count];
@@ -125,14 +108,15 @@ namespace NRasterizer.Rasterizer
 
     }
 
-    public class Rasterizer
+    public class Rasterizer: IGlyphRasterizer
     {
         private readonly Typeface _typeface;
         private const int pointsPerInch = 72;
 
-        public Rasterizer(Typeface typeface)
+        public Rasterizer(Typeface typeface, Raster target)
         {
             _typeface = typeface;
+            _target = target;
         }
 
         private void SetScanFlags(Glyph glyph, Raster scanFlags, int fx, int fy, int size, int x, int y)
@@ -141,7 +125,6 @@ namespace NRasterizer.Rasterizer
             var pixels = scanFlags.Pixels;
             for (int contour = 0; contour < glyph.EndPoints.Length; contour++)
             {
-                var aerg = new List<Segment>(GlyphHelpers.GetContourIterator(glyph, contour, fx, fy, x, y, scale, -scale));
                 foreach (var segment in GlyphHelpers.GetContourIterator(glyph, contour, fx, fy, x, y, scale, -scale))
                 {
                     segment.FillFlags(scanFlags);
@@ -185,55 +168,48 @@ namespace NRasterizer.Rasterizer
             }
         }
 
-        public void Rasterize(string text, int size, Raster raster, bool toFlags = false)
+        #region IGlyphRasterizer implementation
+
+        private readonly Raster _target;
+        private Raster _flags;
+        private double _x;
+        private double _y;
+
+        public void BeginRead(int countourCount)
         {
-            var flags = new Raster(raster.Width, raster.Height, raster.Stride, raster.Resolution);
-
-            // 
-            int fx = 64;
-            int fy = 0;
-            foreach (var character in text)
-            {
-                var glyph = _typeface.Lookup(character);
-                SetScanFlags(glyph, flags, fx, fy, size, 0, 70);
-                fx += _typeface.GetAdvanceWidth(character);
-            }
-
-            if (toFlags)
-            {
-                RenderFlags(flags, raster);
-            }
-            else
-            {
-                RenderScanlines(flags, raster);
-            }
+            _flags = new Raster(_target.Width, _target.Height, _target.Stride, _target.Resolution);
         }
 
-        // TODO: Duplicated code from Rasterize & SetScanFlags
-        public IEnumerable<Segment> GetAllSegments(string text, int size, int resolution)
+        public void EndRead()
         {
-            int x = 0;
-            int y = 70;
-
-            // 
-            int fx = 64;
-            int fy = 0;
-            foreach (var character in text)
-            {
-                var glyph = _typeface.Lookup(character);
-
-                float scale = (float)(size * resolution) / (pointsPerInch * _typeface.UnitsPerEm);
-                for (int contour = 0; contour < glyph.EndPoints.Length; contour++)
-                {
-                    var aerg = new List<Segment>(GlyphHelpers.GetContourIterator(glyph, contour, fx, fy, x, y, scale, -scale));
-                    foreach (var segment in GlyphHelpers.GetContourIterator(glyph, contour, fx, fy, x, y, scale, -scale))
-                    {
-                        yield return segment;
-                    }
-                }
-
-                fx += _typeface.GetAdvanceWidth(character);
-            }
+            RenderScanlines(_flags, _target);
         }
+
+        public void LineTo(double x, double y)
+        {
+            new Line((int)_x, (int)_y, (int)x, (int)y).FillFlags(_flags);
+        }
+
+        public void Curve3(double p2x, double p2y, double x, double y)
+        {
+            new Bezier((int)_x, (int)_y, (int)p2x, (int)p2y, (int)x, (int)y).FillFlags(_flags);
+        }
+
+        public void Curve4(double p2x, double p2y, double p3x, double p3y, double x, double y)
+        {
+            // TODO: subdivide...
+        }
+
+        public void MoveTo(double x, double y)
+        {
+            _x = x;
+            _y = y;
+        }
+
+        public void CloseFigure()
+        {
+        }
+
+        #endregion
     }
 }

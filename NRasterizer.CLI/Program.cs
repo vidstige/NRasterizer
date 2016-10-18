@@ -9,11 +9,6 @@ namespace NRasterizer.CLI
 {
     public class NRasterizerProgram
     {
-        private void Draw(Raster raster, Typeface typeface, string text, int size)
-        {
-            new Rasterizer.Rasterizer(typeface).Rasterize(text, size, raster, false);
-        }
-
         private static Rectangle Entire(Bitmap b)
         {
             return new Rectangle(0, 0, b.Width, b.Height);
@@ -34,19 +29,6 @@ namespace NRasterizer.CLI
                     si += raster.Stride;
                     di = new IntPtr(di.ToInt64() + bitmapData.Stride);
                 }
-
-                //if NET20
-                //unsafe
-                //{
-                //    IntPtr di = bitmapData.Scan0;
-                //    byte* di1 = (byte*)di;
-                //    for (int y = 0; y < b.Height; y++)
-                //    {
-                //        Marshal.Copy(raster.Pixels, si, (IntPtr)di1, b.Width);
-                //        si += raster.Stride;
-                //        di1 += bitmapData.Stride; 
-                //    }
-                //}
             }
             finally
             {
@@ -57,7 +39,7 @@ namespace NRasterizer.CLI
             }
         }
 
-        private void Draw(FileInfo fontPath, FileInfo target)
+        private void DrawSoft(FileInfo fontPath, FileInfo target, string text)
         {
             const int width = 200;
             const int height = 80;
@@ -66,17 +48,19 @@ namespace NRasterizer.CLI
             using (var input = fontPath.OpenRead())
             {
                 var typeface = new OpenTypeReader().Read(input);
-                Draw(raster, typeface, "cefhijl", 48);
+                var rasterizer = new Rasterizer.Rasterizer(typeface, raster);
+                var renderer = new Renderer(typeface, rasterizer);
+                renderer.Render(0, 0, text, 36, 72);
             }
 
-            using (Bitmap b = new Bitmap(width, height, PixelFormat.Format8bppIndexed))
+            using (Bitmap b = new Bitmap(width, height, PixelFormat.Format32bppPArgb))
             {
                 BlitTo(raster, b);
                 b.Save(target.FullName, ImageFormat.Png);
             }
         }
 
-        void DrawHacky(FileInfo fontPath, FileInfo target, string text)
+        void DrawGDI(FileInfo fontPath, FileInfo target, string text)
         {
             const int width = 200;
             const int height = 80;
@@ -107,9 +91,8 @@ namespace NRasterizer.CLI
 
             var program = new NRasterizerProgram();
             target.Directory.Create();
-            //program.Draw(fontPath, target);
-
-            program.DrawHacky(fontPath, target, text);
+            program.DrawGDI(fontPath, target, text);
+            //program.DrawSoft(fontPath, target, text);
         }
     }
 }
