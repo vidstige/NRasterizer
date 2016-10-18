@@ -6,12 +6,10 @@ namespace NRasterizer.Rasterizer
 {
     public class Rasterizer: IGlyphRasterizer
     {
-        private readonly Typeface _typeface;
         private const int pointsPerInch = 72;
 
-        public Rasterizer(Typeface typeface, Raster target)
+        public Rasterizer(Raster target)
         {
-            _typeface = typeface;
             _target = target;
         }
 

@@ -48,7 +48,7 @@ namespace NRasterizer.CLI
             using (var input = fontPath.OpenRead())
             {
                 var typeface = new OpenTypeReader().Read(input);
-                var rasterizer = new Rasterizer.Rasterizer(typeface, raster);
+                var rasterizer = new Rasterizer.Rasterizer(raster);
                 var renderer = new Renderer(typeface, rasterizer);
                 renderer.Render(0, 0, text, 36, 72);
             }
