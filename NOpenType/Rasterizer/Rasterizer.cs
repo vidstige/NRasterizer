@@ -44,7 +44,7 @@ namespace NRasterizer.Rasterizer
                     {
                         fill = !fill;
                     }
-                    destinataion[row + x] = fill ? (byte)255 : (byte)0;
+                    destinataion[row + x] = fill ? (byte)0 : (byte)255;
                 }
             }
         }
