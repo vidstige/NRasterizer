@@ -16,7 +16,7 @@ Below is a sample using the GDI+ rasterizer.
 
 Below is a sample using the NRasterizer rasterizer.
 
-![Latest master sample](https://s3-us-west-2.amazonaws.com/nrasterizer-artifacts/master/samples/F.png "Latest master sample")
+![Latest master sample](https://s3-us-west-2.amazonaws.com/nrasterizer-artifacts/master/samples/clfx.png "Latest master sample")
 
 
 Old sample screenshot
