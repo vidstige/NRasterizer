@@ -40,7 +40,7 @@ namespace NRasterizer.Rasterizer
                 int row = stride * y;
                 for (int x = 0; x < target.Width; x++)
                 {
-                    if (source[row + x] > 0)
+                    if (source[row + x] % 2 == 1)
                     {
                         fill = !fill;
                     }
