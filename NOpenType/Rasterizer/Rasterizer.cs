@@ -84,7 +84,7 @@ namespace NRasterizer.Rasterizer
         public void Curve3(double p2x, double p2y, double x, double y)
         {
             Console.Out.WriteLine("Bezier: {0}, {1}, {2}, {3}", p2x, p2y, x, y);
-            new Bezier((int)_x, (int)_y, (int)p2x, (int)p2y, (int)x, (int)y).FillFlags(_flags);
+            new Bezier((float)_x, (float)_y, (float)p2x, (float)p2y, (float)x, (float)y).FillFlags(_flags);
             _x = x;
             _y = y;
         }
