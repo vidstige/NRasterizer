@@ -52,6 +52,12 @@ namespace NRasterizer
         {
             _inner.CloseFigure();
         }
+
+        public void Flush()
+        {
+            _inner.Flush();
+        }
+
         #endregion
     }
 }

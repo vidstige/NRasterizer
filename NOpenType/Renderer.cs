@@ -218,6 +218,7 @@ namespace NRasterizer
                 RenderGlyph(xx, yy, _typeface.Lookup(character));
                 xx += _typeface.GetAdvanceWidth(character) / (float)FT_RESIZE;
             }
+            _rasterizer.Flush();
         }
     }
 

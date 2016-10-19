@@ -29,8 +29,6 @@ namespace NRasterizer.CLI
 
         public void EndRead()
         {
-            // Draw to graphics
-            _graphics.FillPath(_brush, ps);
         }
 
         public void CloseFigure()
@@ -82,6 +80,11 @@ namespace NRasterizer.CLI
         {
             lastX = lastMoveX = (float)x;
             lastY = lastMoveY = (float)y;
+        }
+
+        public void Flush()
+        {
+            _graphics.FillPath(_brush, ps);
         }
 
         #endregion

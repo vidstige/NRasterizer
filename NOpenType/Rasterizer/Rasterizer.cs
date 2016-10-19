@@ -11,6 +11,7 @@ namespace NRasterizer.Rasterizer
         public Rasterizer(Raster target)
         {
             _target = target;
+            _flags = new Raster(_target.Width, _target.Height, _target.Stride, _target.Resolution);
         }
 
         private void RenderFlags(Raster scanFlags, Raster target)
@@ -63,14 +64,11 @@ namespace NRasterizer.Rasterizer
 
         public void BeginRead(int countourCount)
         {
-            _flags = new Raster(_target.Width, _target.Height, _target.Stride, _target.Resolution);
             first = true;
         }
 
         public void EndRead()
         {
-            RenderScanlines(_flags, _target);
-            //RenderFlags(_flags, _target);
         }
 
         public void LineTo(double x, double y)
@@ -113,6 +111,12 @@ namespace NRasterizer.Rasterizer
         public void CloseFigure()
         {
             LineTo(_firstX, _firstY);
+        }
+
+        public void Flush()
+        {            
+            RenderScanlines(_flags, _target);
+            //RenderFlags(_flags, _target);
         }
 
         #endregion
