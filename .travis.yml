@@ -12,5 +12,5 @@ script:
 addons:
   artifacts:
     paths:
-        - ./samples/cefhijl.png
+        - $(find samples/ | tr "\n" ":")
     target_paths: $TRAVIS_BRANCH
