@@ -19,7 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <Commandlineparameters>../../../Sample/segoeui.ttf ../../../samples/cefhijl.png cefhijl</Commandlineparameters>
+    <Commandlineparameters>../../../Sample/segoeui.ttf ../../../samples/cefhijl.png T</Commandlineparameters>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

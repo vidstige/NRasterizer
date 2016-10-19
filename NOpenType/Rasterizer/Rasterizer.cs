@@ -56,39 +56,63 @@ namespace NRasterizer.Rasterizer
         private double _x;
         private double _y;
 
+        // Special hack
+        private bool first;
+        private double _firstX;
+        private double _firstY;
+
         public void BeginRead(int countourCount)
         {
             _flags = new Raster(_target.Width, _target.Height, _target.Stride, _target.Resolution);
+            first = true;
         }
 
         public void EndRead()
         {
             RenderScanlines(_flags, _target);
+            //RenderFlags(_flags, _target);
         }
 
         public void LineTo(double x, double y)
         {
+            Console.Out.WriteLine("Line: {0}, {1}", x, y);
             new Line((int)_x, (int)_y, (int)x, (int)y).FillFlags(_flags);
+            _x = x;
+            _y = y;
         }
 
         public void Curve3(double p2x, double p2y, double x, double y)
         {
+            Console.Out.WriteLine("Bezier: {0}, {1}, {2}, {3}", p2x, p2y, x, y);
             new Bezier((int)_x, (int)_y, (int)p2x, (int)p2y, (int)x, (int)y).FillFlags(_flags);
+            _x = x;
+            _y = y;
         }
 
         public void Curve4(double p2x, double p2y, double p3x, double p3y, double x, double y)
         {
             // TODO: subdivide...
-        }
-
-        public void MoveTo(double x, double y)
-        {
             _x = x;
             _y = y;
         }
 
+        public void MoveTo(double x, double y)
+        {
+            Console.Out.WriteLine("Move: {0}, {1}", x, y);
+            _x = x;
+            _y = y;
+
+            if (first)
+            {
+                _firstX = x;
+                _firstY = y;
+                first = false;
+            }
+        }
+
         public void CloseFigure()
         {
+            LineTo(_firstX, _firstY);
         }
 
         #endregion

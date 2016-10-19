@@ -39,6 +39,15 @@ namespace NRasterizer.CLI
             }
         }
 
+        private static void Grayscale(Image image)
+        {
+            var palette = image.Palette;
+            for(int i = 0; i < palette.Entries.Length; i++) {
+                palette.Entries[i] = Color.FromArgb(i, i, i);
+            }
+            image.Palette = palette;
+        }
+
         private void DrawSoft(FileInfo fontPath, FileInfo target, string text)
         {
             const int width = 200;
@@ -53,8 +62,9 @@ namespace NRasterizer.CLI
                 renderer.Render(0, 0, text, 36, 72);
             }
 
-            using (Bitmap b = new Bitmap(width, height, PixelFormat.Format32bppPArgb))
+            using (Bitmap b = new Bitmap(width, height, PixelFormat.Format8bppIndexed))
             {
+                Grayscale(b);
                 BlitTo(raster, b);
                 b.Save(target.FullName, ImageFormat.Png);
             }
@@ -79,20 +89,34 @@ namespace NRasterizer.CLI
                     }
                     b.Save(target.FullName, ImageFormat.Png);
                 }
-
             }
+        }
+
+        public void Draw(string rasterizerName, FileInfo fontPath, FileInfo target, string text)
+        {
+            target.Directory.Create();
+            if (rasterizerName == "gdi+")
+            {
+                DrawGDI(fontPath, target, text);
+                return;
+            }
+            if (rasterizerName == "nrasterizer")
+            {
+                DrawSoft(fontPath, target, text);
+                return;
+            }
+            throw new ApplicationException("Unknown rasterizer: " + rasterizerName);
         }
 
         public static void Main(string[] args)
         {
-            var fontPath = new FileInfo(args[0]);
-            var target = new FileInfo(args[1]);
-            var text = args[2];
+            var rasterizerName = args[0];
+            var fontPath = new FileInfo(args[1]);
+            var target = new FileInfo(args[2]);
+            var text = args[3];
 
             var program = new NRasterizerProgram();
-            target.Directory.Create();
-            program.DrawGDI(fontPath, target, text);
-            //program.DrawSoft(fontPath, target, text);
+            program.Draw(rasterizerName, fontPath, target, text);
         }
     }
 }
