@@ -12,6 +12,7 @@ namespace NRasterizer.Tests
         private Renderer _renderer;
         private Mock<IGlyphRasterizer> _mock;
         private MockSequence _sequence;
+        private int Scaler = 64;
 
         [SetUp]
         public void SetUp()
@@ -30,7 +31,7 @@ namespace NRasterizer.Tests
 
         private void Render(Glyph glyph)
         {
-            _renderer.RenderGlyph(0, 0, glyph);
+            _renderer.RenderGlyph(0, 0, 1, Scaler, glyph);
         }
 
         private void StartAt(double x, double y)
@@ -62,7 +63,7 @@ namespace NRasterizer.Tests
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, true, true };
 
-            // These coordinates ssytems are flipped in y-direction by EM-square baseline (2048) and then scaled by 1/64
+            // These coordinates sytems are flipped in y-direction by EM-square baseline (2048) and then scaled by 1/64
             StartAt(0, 32);
             AssertLineTo(2, 32);
             AssertLineTo(2, 30);
@@ -80,11 +81,11 @@ namespace NRasterizer.Tests
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, false, true };
 
-            // These coordinates ssytems are flipped in y-direction by EM-square baseline (2048) and then scaled by 1/64
-            StartAt(0, 32);
-            AssertLineTo(2, 32);
-            AssertBezierTo(2, 30, 0, 30);
-            AssertLineTo(0, 32);
+            // These coordinates sytems are flipped in y-direction by EM-square baseline (2048) and then scaled by 1/64
+            StartAt(0, EmSquare.Size / Scaler);
+            AssertLineTo(128 / Scaler, EmSquare.Size / Scaler);
+            AssertBezierTo(128 / Scaler, (EmSquare.Size - 128) / Scaler, 0, (EmSquare.Size - 128) / Scaler);
+            AssertLineTo(0, EmSquare.Size / Scaler);
             AssertContourDone();
 
             Render(new Glyph(x, y, on, new ushort[] { 3 }, null));

@@ -58,9 +58,9 @@
     <Compile Include="Rasterizer\Segment.cs" />
     <Compile Include="Rasterizer\Bezier.cs" />
     <Compile Include="Rasterizer\Rasterizer.cs" />
-    <Compile Include="TranslatingRasterizer.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="EmSquare.cs" />
+    <Compile Include="ToPixelRasterizer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

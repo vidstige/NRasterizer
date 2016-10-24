@@ -20,6 +20,7 @@ namespace NRasterizer
             public T Y { get { return y; } }
         }
 
+        private const int PointsPerInch = 72;
         private readonly IGlyphRasterizer _rasterizer;
         private readonly Typeface _typeface;
         private const int pointsPerInch = 72;
@@ -31,9 +32,9 @@ namespace NRasterizer
             _rasterizer = rasterizer;
         }
 
-        public void RenderGlyph(float x, float y, Glyph glyph)
+        public void RenderGlyph(int x, int y, int m, int d, Glyph glyph)
         {
-            var rasterizer = new TranslatingRasterizer(x, y, _rasterizer);
+            var rasterizer = new ToPixelRasterizer(x, y, m, d, _rasterizer);
 
             ushort[] contours = glyph.EndPoints;
             short[] xs = glyph.X;
@@ -46,16 +47,16 @@ namespace NRasterizer
 
             rasterizer.BeginRead(contours.Length);
 
-            double lastMoveX = 0;
-            double lastMoveY = 0;
+            int lastMoveX = 0;
+            int lastMoveY = 0;
 
             int controlPointCount = 0;
             for (int i = 0; i < contours.Length; i++)
             {
                 int nextContour = contours[startContour] + 1;
                 bool isFirstPoint = true;
-                Point<double> secondControlPoint = new Point<double>();
-                Point<double> thirdControlPoint = new Point<double>();
+                Point<int> secondControlPoint = new Point<int>();
+                Point<int> thirdControlPoint = new Point<int>();
                 bool justFromCurveMode = false;
 
                 for (; cpoint_index < nextContour; ++cpoint_index)
@@ -73,21 +74,18 @@ namespace NRasterizer
                                 case 1:
                                     {
                                         rasterizer.Curve3(
-                                            secondControlPoint.x / FT_RESIZE,
-                                            (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
-                                            vpoint_x / FT_RESIZE,
-                                            (EmSquare.Size - vpoint_y) / FT_RESIZE);
+                                            secondControlPoint.x,
+                                            secondControlPoint.y,
+                                            vpoint_x,
+                                            vpoint_y);
                                     }
                                     break;
                                 case 2:
                                     {
                                         rasterizer.Curve4(
-                                            secondControlPoint.x / FT_RESIZE, 
-                                            (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
-                                            thirdControlPoint.x / FT_RESIZE,
-                                            (EmSquare.Size - thirdControlPoint.y) / FT_RESIZE,
-                                            vpoint_x / FT_RESIZE,
-                                            (EmSquare.Size - vpoint_y) / FT_RESIZE);
+                                                secondControlPoint.x,  secondControlPoint.y,
+                                                thirdControlPoint.x, thirdControlPoint.y,
+                                                vpoint_x, vpoint_y);
                                     }
                                     break;
                                 default:
@@ -103,15 +101,13 @@ namespace NRasterizer
                             if (isFirstPoint)
                             {
                                 isFirstPoint = false;
-                                rasterizer.MoveTo(
-                                    lastMoveX = (vpoint_x / FT_RESIZE),
-                                    lastMoveY = ((EmSquare.Size - vpoint_y) / FT_RESIZE));
+                                lastMoveX = vpoint_x;
+                                lastMoveY = vpoint_y;
+                                rasterizer.MoveTo(lastMoveX, lastMoveY);
                             }
                             else
                             {
-                                rasterizer.LineTo(
-                                    vpoint_x / FT_RESIZE,
-                                    (EmSquare.Size - vpoint_y) / FT_RESIZE);
+                                rasterizer.LineTo(vpoint_x, vpoint_y);
                             }
                         }
                     }
@@ -121,7 +117,7 @@ namespace NRasterizer
                         {
                             case 0:
                                 {
-                                    secondControlPoint = new Point<double>(vpoint_x, vpoint_y);
+                                    secondControlPoint = new Point<int>(vpoint_x, vpoint_y);
                                 }
                                 break;
                             case 1:
@@ -129,19 +125,17 @@ namespace NRasterizer
                                     //we already have prev second control point
                                     //so auto calculate line to 
                                     //between 2 point
-                                    Point<double> mid = GetMidPoint(secondControlPoint, vpoint_x, vpoint_y);
+                                    Point<int> mid = GetMidPoint(secondControlPoint, vpoint_x, vpoint_y);
                                     //----------
                                     //generate curve3
                                     rasterizer.Curve3(
-                                        secondControlPoint.x / FT_RESIZE,
-                                        (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
-                                        mid.x / FT_RESIZE,
-                                        (EmSquare.Size - mid.y) / FT_RESIZE);
+                                        secondControlPoint.x, secondControlPoint.y,
+                                        mid.x, mid.y);
                                     //------------------------
                                     controlPointCount--;
                                     //------------------------
                                     //printf("[%d] bzc2nd,  x: %d,y:%d \n", mm, vpoint.x, vpoint.y);
-                                    secondControlPoint = new Point<double>(vpoint_x, vpoint_y);
+                                    secondControlPoint = new Point<int>(vpoint_x, vpoint_y);
                                 }
                                 break;
                             default:
@@ -165,21 +159,16 @@ namespace NRasterizer
                         case 1:
                             {
                                 rasterizer.Curve3(
-                                    secondControlPoint.x / FT_RESIZE,
-                                    (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
-                                    lastMoveX,
-                                    lastMoveY);
+                                    secondControlPoint.x, secondControlPoint.y,
+                                    lastMoveX, lastMoveY);
                             }
                             break;
                         case 2:
                             {
                                 rasterizer.Curve4(
-                                    secondControlPoint.x / FT_RESIZE,
-                                    (EmSquare.Size - secondControlPoint.y) / FT_RESIZE,
-                                    thirdControlPoint.x / FT_RESIZE,
-                                    (EmSquare.Size - thirdControlPoint.y) / FT_RESIZE,
-                                    lastMoveX,
-                                    lastMoveY);
+                                    secondControlPoint.x, secondControlPoint.y,
+                                    thirdControlPoint.x, thirdControlPoint.y,
+                                    lastMoveX, lastMoveY);
                             }
                             break;
                         default:
@@ -195,28 +184,31 @@ namespace NRasterizer
             rasterizer.EndRead();
         }
 
-        private static Point<double> GetMidPoint(Point<double> v1, int v2x, int v2y)
+        private static Point<int> GetMidPoint(Point<int> v1, int v2x, int v2y)
         {
-            return new Point<double>(
-                ((double)v1.X + (double)v2x) / 2d,
-                ((double)v1.Y + (double)v2y) / 2d);
+            return new Point<int>((v1.X + v2x) / 2, (v1.Y + v2y) / 2);
         }
 
-        private static Point<double> GetMidPoint(Point<double> v1, Point<double> v2)
+        private static Point<int> GetMidPoint(Point<int> v1, Point<int> v2)
         {
-            return new Point<double>(
-                ((double)v1.x + (double)v2.x) / 2d,
-                ((double)v1.y + (double)v2.y) / 2d);
+            return new Point<int>((v1.x + v2.x) / 2, (v1.y + v2.y) / 2);
+        }
+
+        private int ToPixels(int funits, int pointSize, int dpi)
+        {
+            return funits * pointSize * dpi / (EmSquare.Size * pointsPerInch);
         }
 
         public void Render(int x, int y, string text, int size, int resolution)
         {
-            float xx = x;
-            float yy = y;
+            int xx = x * EmSquare.Size * PointsPerInch;
+            int yy = y * EmSquare.Size * PointsPerInch;
+            int m = size * resolution;
+            int d = EmSquare.Size * PointsPerInch;
             foreach (var character in text)
             {
-                RenderGlyph(xx, yy, _typeface.Lookup(character));
-                xx += _typeface.GetAdvanceWidth(character) / (float)FT_RESIZE;
+                RenderGlyph(xx, yy, m, d, _typeface.Lookup(character));
+                xx += _typeface.GetAdvanceWidth(character);
             }
             _rasterizer.Flush();
         }
