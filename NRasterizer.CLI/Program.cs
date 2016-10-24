@@ -89,7 +89,7 @@ namespace NRasterizer.CLI
                     using (var g = Graphics.FromImage(b))
                     {
                         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                        var rasterizer = new GDIGlyphRasterizer(g);
+                        var rasterizer = new GDIGlyphRasterizer(g, Brushes.Black);
                         var renderer = new Renderer(typeface, rasterizer);
                         renderer.Render(0, 0, text, Size, Resolution);
                     }

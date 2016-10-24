@@ -5,19 +5,17 @@ namespace NRasterizer.CLI
 {
     public class GDIGlyphRasterizer: IGlyphRasterizer
     {
-        System.Drawing.Drawing2D.GraphicsPath ps;
-        float lastMoveX;
-        float lastMoveY;
-        float lastX;
-        float lastY;
+        private System.Drawing.Drawing2D.GraphicsPath ps;
+        private float lastX;
+        private float lastY;
 
-        Graphics _graphics;
-        Brush _brush;
+        private Graphics _graphics;
+        private Brush _brush;
 
-        public GDIGlyphRasterizer(Graphics g)
+        public GDIGlyphRasterizer(Graphics g, Brush brush)
         {
             _graphics = g;
-            _brush = Brushes.Black;
+            _brush = brush;
         }
 
         #region IGlyphRasterizer implementation
@@ -78,8 +76,8 @@ namespace NRasterizer.CLI
 
         public void MoveTo(double x, double y)
         {
-            lastX = lastMoveX = (float)x;
-            lastY = lastMoveY = (float)y;
+            lastX = (float)x;
+            lastY = (float)y;
         }
 
         public void Flush()
