@@ -52,6 +52,8 @@ namespace NRasterizer.CLI
         {
             const int width = 200;
             const int height = 80;
+            const int Size = 64;
+            const int Resolution = 72;
             var raster = new Raster(width, height, width, 72);
 
             using (var input = fontPath.OpenRead())
@@ -59,33 +61,37 @@ namespace NRasterizer.CLI
                 var typeface = new OpenTypeReader().Read(input);
                 var rasterizer = new Rasterizer.Rasterizer(raster);
                 var renderer = new Renderer(typeface, rasterizer);
-                renderer.Render(0, 0, text, 36, 72);
+                renderer.Render(0, 0, text, Size, Resolution);
             }
 
             using (Bitmap b = new Bitmap(width, height, PixelFormat.Format8bppIndexed))
             {
+                b.SetResolution(Resolution, Resolution);
                 Grayscale(b);
                 BlitTo(raster, b);
                 b.Save(target.FullName, ImageFormat.Png);
             }
         }
 
-        void DrawGDI(FileInfo fontPath, FileInfo target, string text)
+        private void DrawGDI(FileInfo fontPath, FileInfo target, string text)
         {
             const int width = 200;
             const int height = 80;
+            const int Size = 64;
+            const int Resolution = 72;
 
             using (var input = fontPath.OpenRead())
             {
                 var typeface = new OpenTypeReader().Read(input);
                 using (Bitmap b = new Bitmap(width, height, PixelFormat.Format32bppArgb))
                 {
+                    b.SetResolution(Resolution, Resolution);
                     using (var g = Graphics.FromImage(b))
                     {
                         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                         var rasterizer = new GDIGlyphRasterizer(g);
                         var renderer = new Renderer(typeface, rasterizer);
-                        renderer.Render(0, 0, text, 36, 72);
+                        renderer.Render(0, 0, text, Size, Resolution);
                     }
                     b.Save(target.FullName, ImageFormat.Png);
                 }
