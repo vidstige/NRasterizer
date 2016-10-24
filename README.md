@@ -18,10 +18,5 @@ Below is a sample using the NRasterizer rasterizer.
 
 ![Latest master sample](https://s3-us-west-2.amazonaws.com/nrasterizer-artifacts/master/samples/clfx.png "Latest master sample")
 
-
-Old sample screenshot
-
-![Screenshot](screenshots/1.png "Screenshot 1") 
-
 ## Author
 Samuel Carlsson <samuel.carlsson@gmail.com>
