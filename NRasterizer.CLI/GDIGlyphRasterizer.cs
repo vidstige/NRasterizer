@@ -16,13 +16,13 @@ namespace NRasterizer.CLI
         {
             _graphics = g;
             _brush = brush;
+            ps = new System.Drawing.Drawing2D.GraphicsPath();
         }
 
         #region IGlyphRasterizer implementation
 
         public void BeginRead(int countourCount)
         {
-            ps = new System.Drawing.Drawing2D.GraphicsPath();
         }
 
         public void EndRead()
