@@ -1,9 +1,13 @@
 # .NET-core
 project.lock.json
 
+# Visual Studio & MonoDevelop
+*.userprefs
+
 # NuGet
 /packages/
 /testrunner/
+*.nupkg
 
 # NUnit
 TestResult.xml
