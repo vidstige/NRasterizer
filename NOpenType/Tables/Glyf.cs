@@ -128,7 +128,7 @@ namespace NRasterizer.Tables
             return (haystack & needle) != 0;
         }
 
-        private static CompositeGlyph ReadCompositeGlyph(BinaryReader input, int count, Bounds bounds, List<IGlyph> glyphs)
+        private static CompositeGlyph ReadCompositeGlyph(BinaryReader input, int count, Bounds bounds, List<Glyph> glyphs)
         {
             List<CompositeGlyph.Composite> result = new List<CompositeGlyph.Composite>();
             CompositeFlags flags;
@@ -191,11 +191,13 @@ namespace NRasterizer.Tables
             //return Glyph.Empty;
         }
 
-        internal static List<IGlyph> From(TableEntry table, GlyphLocations locations)
+        internal static List<Glyph> From(TableEntry table, GlyphLocations locations)
         {
             var glyphCount = locations.GlyphCount;
 
-            var glyphs = new List<IGlyph>(glyphCount);
+            var glyphs = new List<Glyph>(glyphCount);
+            var compositeGlyphs = new List<CompositeGlyph>(glyphCount);
+
             for (int i = 0; i < glyphCount; i++)
             {
                 var input = table.GetDataReader();
@@ -212,7 +214,8 @@ namespace NRasterizer.Tables
                     }
                     else
                     {
-                        glyphs.Add(ReadCompositeGlyph(input, -contoursCount, bounds, glyphs));
+                        compositeGlyphs.Add(ReadCompositeGlyph(input, -contoursCount, bounds, glyphs));
+                        glyphs.Add(null);
                     }
                 }
                 else
@@ -222,14 +225,16 @@ namespace NRasterizer.Tables
             }
 
             // Flatten all composites
+            int c = 0;
             for (int i = 0; i < glyphs.Count; i++)
             {
-                var composite = glyphs[i] as CompositeGlyph;
-                if (composite != null)
+                if (glyphs[i] == null)
                 {
-                    glyphs[i] = composite.Flatten(glyphs);
+                    glyphs[i] = compositeGlyphs[c].Flatten(glyphs);
+                    c++;
                 }
             }
+
             return glyphs;
         }
     }

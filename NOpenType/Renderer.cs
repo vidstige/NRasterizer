@@ -17,7 +17,7 @@ namespace NRasterizer
             _rasterizer = rasterizer;
         }
 
-        public void RenderGlyph(int x, int y, int m, int d, IGlyph glyph)
+        public void RenderGlyph(int x, int y, int m, int d, Glyph glyph)
         {
             var rasterizer = new ToPixelRasterizer(x, y, m, d, _rasterizer);
 

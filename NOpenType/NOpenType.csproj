@@ -61,7 +61,6 @@
     <Compile Include="EmSquare.cs" />
     <Compile Include="ToPixelRasterizer.cs" />
     <Compile Include="CompositeGlyph.cs" />
-    <Compile Include="IGlyph.cs" />
     <Compile Include="Glyph.cs" />
     <Compile Include="Transformation.cs" />
     <Compile Include="Point.cs" />

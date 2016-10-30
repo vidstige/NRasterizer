@@ -7,11 +7,11 @@ namespace NRasterizer
     {
         private readonly Bounds _bounds;
         private readonly ushort _unitsPerEm;
-        private readonly List<IGlyph> _glyphs;
+        private readonly List<Glyph> _glyphs;
         private readonly List<CharacterMap> _cmaps;
         private readonly HorizontalMetrics _horizontalMetrics;
 
-        internal Typeface(Bounds bounds, ushort unitsPerEm, List<IGlyph> glyphs, List<CharacterMap> cmaps, HorizontalMetrics horizontalMetrics)
+        internal Typeface(Bounds bounds, ushort unitsPerEm, List<Glyph> glyphs, List<CharacterMap> cmaps, HorizontalMetrics horizontalMetrics)
         {
             _bounds = bounds;
             _unitsPerEm = unitsPerEm;
@@ -26,7 +26,7 @@ namespace NRasterizer
             return _cmaps[0].CharacterToGlyphIndex(character);
         }
 
-        public IGlyph Lookup(char character)
+        public Glyph Lookup(char character)
         {
             return _glyphs[LookupIndex(character)];
         }
@@ -38,6 +38,6 @@ namespace NRasterizer
 
         public Bounds Bounds { get { return _bounds; } }
         public ushort UnitsPerEm { get { return _unitsPerEm; } }
-        public List<IGlyph> Glyphs { get { return _glyphs; } }
+        public List<Glyph> Glyphs { get { return _glyphs; } }
     }
 }

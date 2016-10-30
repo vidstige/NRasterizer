@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NRasterizer.Rasterizer;
 namespace NRasterizer
 {
-    public class Glyph: IGlyph
+    public class Glyph
     {
         private readonly short[] _x;
         private readonly short[] _y;

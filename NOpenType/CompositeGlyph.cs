@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NRasterizer
 {
-    public class CompositeGlyph: IGlyph
+    public class CompositeGlyph
     {
         public class Composite
         {
@@ -27,7 +27,7 @@ namespace NRasterizer
             _composites = composites;
         }
 
-        private IGlyph Transform(Transformation transformation, IGlyph glyph)
+        private Glyph Transform(Transformation transformation, Glyph glyph)
         {
             var xs = (short[])glyph.X.Clone();
             var ys = (short[])glyph.Y.Clone();
@@ -50,7 +50,7 @@ namespace NRasterizer
             return result;
         }
 
-        private IGlyph Combine(IGlyph first, IGlyph second)
+        private Glyph Combine(Glyph first, Glyph second)
         {
             var xs = Concat(first.X, second.X);
             var ys = Concat(first.Y, second.Y);
@@ -66,32 +66,16 @@ namespace NRasterizer
             return new Glyph(xs, ys, ons, Concat(first.EndPoints, endPoints), Bounds.For(first.Bounds, second.Bounds));
         }
 
-        public IGlyph Flatten(List<IGlyph> glyphs)
+        public Glyph Flatten(List<Glyph> glyphs)
         {
-            IGlyph flat = Glyph.Empty;
-            List<IGlyph> parts = new List<IGlyph>();
+            Glyph flat = Glyph.Empty;
+            List<Glyph> parts = new List<Glyph>();
             foreach (var composite in _composites)
             {
                 flat = Combine(flat, Transform(composite.Transformation, glyphs[composite.GlyphIndex]));
                 parts.Add(glyphs[composite.GlyphIndex]);
             }
-
             return flat;
         }
-
-        #region IGlyph implementation
-
-        public Bounds Bounds { get { throw new NotSupportedException(); } }
-
-        public short[] X { get { throw new NotSupportedException(); } }
-
-        public short[] Y { get { throw new NotSupportedException(); } }
-
-        public bool[] On { get { throw new NotSupportedException(); } }
-
-        public ushort[] EndPoints { get { throw new NotSupportedException(); } }
-
-        #endregion
-
     }
 }
