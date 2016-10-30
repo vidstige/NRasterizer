@@ -5,21 +5,6 @@ namespace NRasterizer
 {
     public class Renderer
     {
-        private struct Point<T>
-        {
-            public readonly T x;
-            public readonly T y;
-
-            public Point(T x, T y)
-            {
-                this.x = x;
-                this.y = y;
-            }
-
-            public T X { get { return x; } }
-            public T Y { get { return y; } }
-        }
-
         private const int PointsPerInch = 72;
         private readonly IGlyphRasterizer _rasterizer;
         private readonly Typeface _typeface;

@@ -139,7 +139,7 @@ namespace NRasterizer.Tables
 
                 short arg1;
                 short arg2;
-                short M00 = 1, M01 = 0, M10 = 0, M11 = 1;
+                short m00 = 1 << 14, m01 = 0, m10 = 0, m11 = 1 << 14;
                 if (HasFlag(flags, CompositeFlags.ArgsAreWords)) {
                     arg1 = input.ReadInt16();
                     arg2 = input.ReadInt16();
@@ -149,29 +149,36 @@ namespace NRasterizer.Tables
                     //USHORT arg1and2; /* (arg1 << 8) | arg2 */
                 }
 
+                short dx;
+                short dy;
                 if (HasFlag(flags, CompositeFlags.ArgsAreXYValues))
                 {
-                    // args are dx,dy value
+                    dx = arg1;
+                    dy = arg2;
                 } else {
                     // args are points to be matched
+                    // TODO: Implement
+                    dx = 0;
+                    dy = 0;
                 }
 
                 if (HasFlag(flags, CompositeFlags.WeHaveAScale)) {
                     short scale = input.ReadInt16(); // Format 2.14
-                    M00 = scale;
-                    M11 = scale;
+                    m00 = scale;
+                    m11 = scale;
                 } else if (HasFlag(flags, CompositeFlags.WeHaveXAndYScale)) {
                     short xscale = input.ReadInt16(); // Format 2.14
                     short yscale = input.ReadInt16(); // Format 2.14
-                    M00 = xscale;
-                    M11 = yscale;
+                    m00 = xscale;
+                    m11 = yscale;
                 } else if (HasFlag(flags, CompositeFlags.WeHaveATwoByTwo)) {
-                    M00 = input.ReadInt16(); // Format 2.14
-                    M01 = input.ReadInt16(); // Format 2.14
-                    M10 = input.ReadInt16(); // Format 2.14
-                    M11 = input.ReadInt16(); // Format 2.14
+                    m00 = input.ReadInt16(); // Format 2.14
+                    m01 = input.ReadInt16(); // Format 2.14
+                    m10 = input.ReadInt16(); // Format 2.14
+                    m11 = input.ReadInt16(); // Format 2.14
                 }
-                result.Add(new CompositeGlyph.Composite(glyphIndex, null));
+                Transformation transformation = new Transformation(m00, m01, m10, m11, dx, dy);
+                result.Add(new CompositeGlyph.Composite(glyphIndex, transformation));
             } while (HasFlag(flags, CompositeFlags.MoreComponents));
 
             if (HasFlag(flags, CompositeFlags.WeHaveInstructions))

@@ -61,9 +61,10 @@
     <Compile Include="EmSquare.cs" />
     <Compile Include="ToPixelRasterizer.cs" />
     <Compile Include="CompositeGlyph.cs" />
-    <Compile Include="Transform.cs" />
     <Compile Include="IGlyph.cs" />
     <Compile Include="Glyph.cs" />
+    <Compile Include="Transformation.cs" />
+    <Compile Include="Point.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

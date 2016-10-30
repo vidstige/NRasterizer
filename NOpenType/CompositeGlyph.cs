@@ -8,15 +8,16 @@ namespace NRasterizer
         public class Composite
         {
             private readonly ushort _glyphIndex;
-            private readonly Transform _transform;
-            public Composite(ushort glyphIndex, Transform transform)
+            private readonly Transformation _transformation;
+
+            public Composite(ushort glyphIndex, Transformation transformation)
             {
                 _glyphIndex = glyphIndex;
-                _transform = transform;
+                _transformation = transformation;
             }
 
             public ushort GlyphIndex { get { return _glyphIndex; } }
-            public Transform Transform { get { return _transform; } }
+            public Transformation Transformation { get { return _transformation; } }
         }
 
         private readonly List<Composite> _composites;
@@ -26,9 +27,19 @@ namespace NRasterizer
             _composites = composites;
         }
 
-        private IGlyph Transform(Transform transform, IGlyph glyph)
+        private IGlyph Transform(Transformation transformation, IGlyph glyph)
         {
-            return glyph;
+            var xs = (short[])glyph.X.Clone();
+            var ys = (short[])glyph.Y.Clone();
+            var n = xs.Length;
+            for (int i = 0; i < n; i++)
+            {
+                var p = new Point<short>(xs[i], ys[i]);
+                var pt = transformation.Transform(p);
+                xs[i] = pt.X;
+                ys[i] = pt.Y;
+            }
+            return new Glyph(xs, ys, glyph.On, glyph.EndPoints, glyph.Bounds); // TODO: Transform bounds too..
         }
 
         private T[] Concat<T>(T[] first, T[] second)
@@ -52,7 +63,7 @@ namespace NRasterizer
                 endPoints[i] = (ushort)(endPoints[i] + offset);
             }
 
-            return new Glyph(xs, ys, ons, Concat(first.EndPoints, endPoints), null);
+            return new Glyph(xs, ys, ons, Concat(first.EndPoints, endPoints), Bounds.For(first.Bounds, second.Bounds));
         }
 
         public IGlyph Flatten(List<IGlyph> glyphs)
@@ -61,7 +72,7 @@ namespace NRasterizer
             List<IGlyph> parts = new List<IGlyph>();
             foreach (var composite in _composites)
             {
-                flat = Combine(flat, Transform(composite.Transform, glyphs[composite.GlyphIndex]));
+                flat = Combine(flat, Transform(composite.Transformation, glyphs[composite.GlyphIndex]));
                 parts.Add(glyphs[composite.GlyphIndex]);
             }
 
