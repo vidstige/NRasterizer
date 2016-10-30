@@ -106,17 +106,89 @@ namespace NRasterizer.Tables
             return new Glyph(xs, ys, onCurves, endPoints, bounds);
         }
 
-        private static Glyph ReadCompositeGlyph(BinaryReader input, int count, Bounds bounds)
+        private enum CompositeFlags: ushort
         {
-            // TODO: Parse composite glyphs
-            return Glyph.Empty;
+            ArgsAreWords = 1,    // If this is set, the arguments are words; otherwise, they are bytes.
+            ArgsAreXYValues = 2, // If this is set, the arguments are xy values; otherwise, they are points.
+            RoundXYToGrid = 4,   // For the xy values if the preceding is true.
+            WeHaveAScale = 8,    // This indicates that there is a simple scale for the component. Otherwise, scale = 1.0.
+            Reserved = 16,       // This bit is reserved. Set it to 0.
+            MoreComponents = 32, // Indicates at least one more glyph after this one.
+            WeHaveXAndYScale = 64, // The x direction will use a different scale from the y direction.
+            WeHaveATwoByTwo = 128, // There is a 2 by 2 transformation that will be used to scale the component.
+            WeHaveInstructions = 256, // Following the last component are instructions for the composite character.
+            UseMyMetrics = 512,  // If set, this forces the aw and lsb (and rsb) for the composite to be equal to those from this original glyph. This works for hinted and unhinted characters.
+            OverlapCompound = 1024,  // If set, the components of the compound glyph overlap. Use of this flag is not required in OpenType — that is, it is valid to have components overlap without having this flag set. It may affect behaviors in some platforms, however. (See Apple’s specification for details regarding behavior in Apple platforms.)
+            ScaledComponentOffset = 2048, // The composite is designed to have the component offset scaled.
+            UnscaledComponentOffset = 4096 // The composite is designed not to have the component offset scaled.
         }
 
-        internal static List<Glyph> From(TableEntry table, GlyphLocations locations)
+        private static bool HasFlag(CompositeFlags haystack, CompositeFlags needle)
+        {
+            return (haystack & needle) != 0;
+        }
+
+        private static CompositeGlyph ReadCompositeGlyph(BinaryReader input, int count, Bounds bounds, List<IGlyph> glyphs)
+        {
+            List<CompositeGlyph.Composite> result = new List<CompositeGlyph.Composite>();
+            CompositeFlags flags;
+            ushort glyphIndex;
+            do {
+                flags = (CompositeFlags)input.ReadUInt16();
+                glyphIndex = input.ReadUInt16();
+
+                short arg1;
+                short arg2;
+                short M00 = 1, M01 = 0, M10 = 0, M11 = 1;
+                if (HasFlag(flags, CompositeFlags.ArgsAreWords)) {
+                    arg1 = input.ReadInt16();
+                    arg2 = input.ReadInt16();
+                } else {
+                    arg1 = input.ReadByte();
+                    arg2 = input.ReadByte();
+                    //USHORT arg1and2; /* (arg1 << 8) | arg2 */
+                }
+
+                if (HasFlag(flags, CompositeFlags.ArgsAreXYValues))
+                {
+                    // args are dx,dy value
+                } else {
+                    // args are points to be matched
+                }
+
+                if (HasFlag(flags, CompositeFlags.WeHaveAScale)) {
+                    short scale = input.ReadInt16(); // Format 2.14
+                    M00 = scale;
+                    M11 = scale;
+                } else if (HasFlag(flags, CompositeFlags.WeHaveXAndYScale)) {
+                    short xscale = input.ReadInt16(); // Format 2.14
+                    short yscale = input.ReadInt16(); // Format 2.14
+                    M00 = xscale;
+                    M11 = yscale;
+                } else if (HasFlag(flags, CompositeFlags.WeHaveATwoByTwo)) {
+                    M00 = input.ReadInt16(); // Format 2.14
+                    M01 = input.ReadInt16(); // Format 2.14
+                    M10 = input.ReadInt16(); // Format 2.14
+                    M11 = input.ReadInt16(); // Format 2.14
+                }
+                result.Add(new CompositeGlyph.Composite(glyphIndex, null));
+            } while (HasFlag(flags, CompositeFlags.MoreComponents));
+
+            if (HasFlag(flags, CompositeFlags.WeHaveInstructions))
+            {
+                //USHORT numInstr
+                //BYTE instr[numInstr];
+            }
+
+            return new CompositeGlyph(result);
+            //return Glyph.Empty;
+        }
+
+        internal static List<IGlyph> From(TableEntry table, GlyphLocations locations)
         {
             var glyphCount = locations.GlyphCount;
 
-            var glyphs = new List<Glyph>(glyphCount);
+            var glyphs = new List<IGlyph>(glyphCount);
             for (int i = 0; i < glyphCount; i++)
             {
                 var input = table.GetDataReader();
@@ -133,12 +205,22 @@ namespace NRasterizer.Tables
                     }
                     else
                     {
-                        glyphs.Add(ReadCompositeGlyph(input, -contoursCount, bounds));
+                        glyphs.Add(ReadCompositeGlyph(input, -contoursCount, bounds, glyphs));
                     }
                 }
                 else
                 {
                     glyphs.Add(Glyph.Empty);
+                }
+            }
+
+            // Flatten all composites
+            for (int i = 0; i < glyphs.Count; i++)
+            {
+                var composite = glyphs[i] as CompositeGlyph;
+                if (composite != null)
+                {
+                    glyphs[i] = composite.Flatten(glyphs);
                 }
             }
             return glyphs;
