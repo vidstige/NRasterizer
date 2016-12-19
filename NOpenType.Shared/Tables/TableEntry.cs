@@ -40,7 +40,7 @@ namespace NRasterizer.Tables
         {
             var bytes = BitConverter.GetBytes(tag);
             Array.Reverse(bytes);
-            return Encoding.ASCII.GetString(bytes);
+            return Encoding.Unicode.GetString(bytes, 0, bytes.Length);
         }
 
         public override string ToString()

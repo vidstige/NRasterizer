@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>1374bfcb-5357-4e5c-87d2-b0a176f4f757</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>NRasterizer</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Bounds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CharacterMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CompositeGlyph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EmSquare.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Glyph.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IGlyphRasterizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interpreter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\ByteOrderSwappingBinaryReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NRasterizerException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OpenTypeReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Point.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\BoundsReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\CmapReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\Glyf.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\GlyphLocations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\Head.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\HorizontalHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\HorizontalMetrics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\MaxProfile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tables\TableEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ToPixelRasterizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Typeface.cs" />
+  </ItemGroup>
+</Project>
