@@ -2,8 +2,8 @@
 <package>
   <metadata>
     <id>NOpenType</id>
-    <version>0.0.1</version>
-    <title>Loads and renders TrueType in pure c#</title>
+    <version>0.1.2</version>
+    <title>NOpenType</title>
     <authors>Samuel Carlsson, WinterDev</authors>
     <owners>vidstige</owners>
     <licenseUrl>https://github.com/vidstige/NRasterizer/blob/master/LICENSE.md</licenseUrl>

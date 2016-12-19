@@ -73,5 +73,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="NOpenType.nuspec" />
+  </ItemGroup>
 </Project>
