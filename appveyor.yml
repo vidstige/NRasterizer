@@ -4,20 +4,9 @@ install:
   
 before_build:
 - ps: gitversion /l console /output buildserver /updateAssemblyInfo
-- cmd: >-
-    nuget restore NRasterizer.sln
-
-    dotnet restore ./NOpenType/
 
 build_script:
-- cmd: >-
-    msbuild NRasterizer.sln /p:Configuration=Release
-
-    cd NOpenType
-
-    dotnet version "%GitVersion_NuGetVersion%"
-    
-    dotnet pack -c Release
+- cmd: build.cmd
     
 artifacts:
 - path: NOpenType\bin\Release\*.nupkg
