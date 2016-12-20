@@ -1,12 +1,19 @@
 version: 0.0.{build}
-build_script:
+install:
+- choco install gitversion.portable -pre -y
+  
+before_build:
+- ps: gitversion /l console /output buildserver /updateAssemblyInfo
 - cmd: >-
     nuget restore NRasterizer.sln
 
     dotnet restore ./NOpenType/
 
+build_script:
+- cmd: >-
     msbuild NRasterizer.sln /p:Configuration=Release
     
     dotnet pack ./NOpenType/ -c Release
+    
 artifacts:
 - path: NOpenType\bin\Release\*.nupkg
