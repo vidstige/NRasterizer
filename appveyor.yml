@@ -1,0 +1,12 @@
+version: 0.0.{build}
+build_script:
+- cmd: >-
+    nuget restore NRasterizer.sln
+
+    dotnet restore ./NOpenType/
+
+    msbuild NRasterizer.sln /p:Configuration=Release
+    
+    dotnet pack ./NOpenType/ -c Release
+artifacts:
+- path: NOpenType\bin\Release\*.nupkg
