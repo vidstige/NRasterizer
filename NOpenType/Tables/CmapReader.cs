@@ -53,6 +53,20 @@ namespace NRasterizer.Tables
 
                 return new CharacterMap(segCount, startCode, endCode, idDelta, idRangeOffset, glyphIdArray);
             }
+            else if (format == 0)
+            {
+
+                ushort language = input.ReadUInt16();
+                byte[] only256Glyphs = input.ReadBytes(256);
+                ushort[] only256UInt16Glyphs = new ushort[256];
+                for (int i = 255; i >= 0; --i)
+                {
+                    //expand
+                    only256UInt16Glyphs[i] = only256Glyphs[i];
+                }
+                //convert to format4 cmap table
+                return new CharacterMap(1, new ushort[] { 0 }, new ushort[] { 255 }, null, null, only256UInt16Glyphs);
+            }
             throw new NRasterizerException("Unknown cmap subtable: " + format);
         }
         //static int FindGlyphIdArrayLenInBytes(ushort[] idRangeOffset)
