@@ -117,15 +117,12 @@ namespace NRasterizer.CLI
 
         public static void Main(string[] args)
         {
-            //var rasterizerName = args[0];
-            //var fontPath = new FileInfo(args[1]);
-            //var target = new FileInfo(args[2]);
-            //var text = args[3];
+            var rasterizerName = args[0];
+            var fontPath = new FileInfo(args[1]);
+            var target = new FileInfo(args[2]);
+            var text = args[3];
 
-            string rasterizerName = "gdi+";
-            FileInfo fontPath = new FileInfo(@"..\..\..\Fonts\CompositeMS.ttf");
-            FileInfo target = new FileInfo(@"test_composite.png");
-            string text = "C";
+          
             var program = new NRasterizerProgram();
             program.Draw(rasterizerName, fontPath, target, text);
         }
