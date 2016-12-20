@@ -3,7 +3,7 @@
   "title": "NOpenType",
   "version": "0.1.3-*",
   "description": "Simple and clean TrueType font loader and renderer written purely in c#.",
-  "copyright": "Copyright ©2016 Samuel Carlsson",
+  "copyright": "Copyright ï¿½2016 Samuel Carlsson",
   "authors": [
     "Samuel Carlsson, WinterDev"
   ],
@@ -32,6 +32,9 @@
   },
   "dependencies": {
     "NETStandard.Library": "1.6.0"
+  },
+   "tools": {
+    "dotnet-version": "1.1.0"
   },
   "frameworks": {
     "netstandard1.1": {},

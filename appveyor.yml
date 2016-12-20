@@ -12,8 +12,12 @@ before_build:
 build_script:
 - cmd: >-
     msbuild NRasterizer.sln /p:Configuration=Release
+
+    cd NOpenType
+
+    dotnet version "%GitVersion_NuGetVersion%"
     
-    dotnet pack ./NOpenType/ -c Release
+    dotnet pack -c Release
     
 artifacts:
 - path: NOpenType\bin\Release\*.nupkg
