@@ -1,9 +1,13 @@
 language: csharp
 solution: NRasterizer.sln
 
+before_install:
+  - mkdir -p .nuget
+  - wget -O .nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+  - mono .nuget/nuget.exe # Output NuGet's version number
 install:
-  - nuget restore NRasterizer.sln
-  - nuget install NUnit.Console -Version 3.5.0 -OutputDirectory testrunner
+  - .nuget/nuget restore NRasterizer.sln
+  - .nuget/nuget install NUnit.Console -Version 3.5.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release NRasterizer.sln
   - mono ./testrunner/NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe ./NRasterizer.Tests/bin/Release/NRasterizer.Tests.dll
