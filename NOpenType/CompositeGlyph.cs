@@ -35,7 +35,7 @@ namespace NRasterizer
             for (int i = 0; i < n; i++)
             {
                 var p = new Point<short>(xs[i], ys[i]);
-                var pt = transformation.TransformNormal(p);
+                var pt = transformation.Transform(p);
                 xs[i] = pt.X;
                 ys[i] = pt.Y;
             }

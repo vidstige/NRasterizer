@@ -27,17 +27,9 @@ namespace NRasterizer
         {
             var px = (long)p.X;
             var py = (long)p.Y;
-            var x = (((long)_m00 * px + (long)_m01 * py) >> 14) + _dx;
-            var y = (((long)_m10 * px + (long)_m11 * py) >> 14) + _dy;
-            return new Point<short>((short)x, (short)y);
-        }
-        public Point<short> TransformNormal(Point<short> p)
-        {
-            var px = (long)p.X;
-            var py = (long)p.Y;
             var x = (((long)_m00 * px + (long)_m10 * py) >> 14) + _dx;
             var y = (((long)_m01 * px + (long)_m11 * py) >> 14) + _dy;
             return new Point<short>((short)x, (short)y);
-        }
+        }      
     }
 }
