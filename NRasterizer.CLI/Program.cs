@@ -42,7 +42,8 @@ namespace NRasterizer.CLI
         private static void Grayscale(Image image)
         {
             var palette = image.Palette;
-            for(int i = 0; i < palette.Entries.Length; i++) {
+            for (int i = 0; i < palette.Entries.Length; i++)
+            {
                 palette.Entries[i] = Color.FromArgb(i, i, i);
             }
             image.Palette = palette;
@@ -121,6 +122,7 @@ namespace NRasterizer.CLI
             var target = new FileInfo(args[2]);
             var text = args[3];
 
+          
             var program = new NRasterizerProgram();
             program.Draw(rasterizerName, fontPath, target, text);
         }
