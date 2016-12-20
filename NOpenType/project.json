@@ -1,0 +1,40 @@
+{
+  "name": "NOpenType",
+  "title": "NOpenType",
+  "version": "0.1.3-*",
+  "description": "Simple and clean TrueType font loader and renderer written purely in c#.",
+  "copyright": "Copyright ©2016 Samuel Carlsson",
+  "authors": [
+    "Samuel Carlsson, WinterDev"
+  ],
+  "packOptions": {
+    "owners": [ "vidstige" ],
+    "licenseUrl": "https://github.com/vidstige/NRasterizer/blob/master/LICENSE.md",
+    "projectUrl": "https://github.com/vidstige/NRasterizer",
+    "iconUrl": "https://github.com/vidstige/NRasterizer/raw/master/icon.png",
+    "requireLicenseAcceptance": false,
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/vidstige/NRasterizer"
+    },
+    "tags": [
+      "font",
+      "truetype",
+      "true-type"
+    ]
+  },
+  "configurations": {
+    "Release": {
+      "buildOptions": {
+        "optimize": true
+      }
+    }
+  },
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+  "frameworks": {
+    "netstandard1.1": {},
+    "net20": {}
+  }
+}

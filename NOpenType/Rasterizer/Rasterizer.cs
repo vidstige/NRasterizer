@@ -73,7 +73,7 @@ namespace NRasterizer.Rasterizer
 
         public void LineTo(double x, double y)
         {
-            Console.Out.WriteLine("Line: {0}, {1}", x, y);
+            //Console.Out.WriteLine("Line: {0}, {1}", x, y);
             new Line((int)_x, (int)_y, (int)x, (int)y).FillFlags(_flags);
             _x = x;
             _y = y;
@@ -81,7 +81,7 @@ namespace NRasterizer.Rasterizer
 
         public void Curve3(double p2x, double p2y, double x, double y)
         {
-            Console.Out.WriteLine("Bezier: {0}, {1}, {2}, {3}", p2x, p2y, x, y);
+            //Console.Out.WriteLine("Bezier: {0}, {1}, {2}, {3}", p2x, p2y, x, y);
             new Bezier((float)_x, (float)_y, (float)p2x, (float)p2y, (float)x, (float)y).FillFlags(_flags);
             _x = x;
             _y = y;
@@ -96,7 +96,7 @@ namespace NRasterizer.Rasterizer
 
         public void MoveTo(double x, double y)
         {
-            Console.Out.WriteLine("Move: {0}, {1}", x, y);
+            //Console.Out.WriteLine("Move: {0}, {1}", x, y);
             _x = x;
             _y = y;
 

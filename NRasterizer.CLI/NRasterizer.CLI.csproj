@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NRasterizer.CLI</RootNamespace>
     <AssemblyName>NRasterizer.CLI</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,12 +42,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\NOpenType\NOpenType.csproj">
-      <Project>{5BD9866C-9022-4AD8-BB96-EFED35C8324F}</Project>
-      <Name>NOpenType</Name>
-    </ProjectReference>
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <ProjectReference Include="..\NOpenType\NOpenType.csproj">
+      <Project>{4f74a90e-c244-4b7c-98e4-72c1622517fc}</Project>
+      <Name>NOpenType</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
