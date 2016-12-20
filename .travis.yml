@@ -3,10 +3,10 @@ solution: NRasterizer.sln
 
 before_install:
   - mkdir -p .nuget
-  - wget -O .nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+  - wget -O .nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/v3.4.4/nuget.exe
   - mono .nuget/nuget.exe # Output NuGet's version number
 install:
-  -  mono .nuget/nuget.exe restore NRasterizer.sln
+  -  mono .nuget/nuget.exe restore NRasterizer.sln -verbosity d
   -  mono .nuget/nuget.exe install NUnit.Console -Version 3.5.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release NRasterizer.sln
