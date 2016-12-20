@@ -35,6 +35,10 @@
   },
   "frameworks": {
     "netstandard1.1": {},
-    "net20": {}
+    "net20": {
+      "buildOptions": {
+        "define": [ "NET20" ]
+      }
+    }
   }
 }
