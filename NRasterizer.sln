@@ -7,11 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRasterizer.Tests", "NRaste
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRasterizer.CLI", "NRasterizer.CLI\NRasterizer.CLI.csproj", "{8FD65B63-92A2-4868-AC93-19E385DF76C6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E6AC607C-A66B-45DA-B91D-B82B085EC352}"
-	ProjectSection(SolutionItems) = preProject
-		.travis.yml = .travis.yml
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NOpenType", "NOpenType\NOpenType.csproj", "{4F74A90E-C244-4B7C-98E4-72C1622517FC}"
 EndProject
 Global
