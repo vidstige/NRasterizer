@@ -17,14 +17,14 @@ if not "%GitVersion_NuGetVersion%" == "" (
     cd NOpenType
     ECHO Setting version number to "%GitVersion_NuGetVersion%"
     dotnet version "%GitVersion_NuGetVersion%"
-    cd ../NOpenType
+    cd ../
     if not "%errorlevel%"=="0" goto failure
 )
 
 
 ECHO Building nuget packages
 if not "%GitVersion_NuGetVersion%" == "" (
-	dotnet pack -c Release
+	dotnet pack -c Release ./NOpenType/project.json
 )ELSE ( 
 	dotnet pack -c Release --version-suffix "local-build" ./NOpenType/project.json
 )
