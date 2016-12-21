@@ -7,6 +7,8 @@ before_build:
 
 build_script:
 - cmd: build.cmd
+- cmd: build\generate_samples.cmd
     
 artifacts:
 - path: NOpenType\bin\Release\*.nupkg
+- path: samples\**\*.png
