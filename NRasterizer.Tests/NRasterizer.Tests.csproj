@@ -47,13 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Given_Glyph.cs" />
+    <Compile Include="TestFonts.cs" />
+    <Compile Include="OpenTypeReaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NOpenType\NOpenType.csproj">
-      <Project>{5BD9866C-9022-4AD8-BB96-EFED35C8324F}</Project>
-      <Name>NOpenType</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -64,6 +60,24 @@
   </Target>
   -->
   <ItemGroup>
+    <None Include="..\Fonts\CompositeMS.ttf">
+      <Link>TestFonts\CompositeMS.ttf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Fonts\OpenSans-Regular.ttf">
+      <Link>TestFonts\OpenSans-Regular.ttf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Fonts\segoeui.ttf">
+      <Link>TestFonts\segoeui.ttf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NOpenType\NOpenType.csproj">
+      <Project>{4f74a90e-c244-4b7c-98e4-72c1622517fc}</Project>
+      <Name>NOpenType</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

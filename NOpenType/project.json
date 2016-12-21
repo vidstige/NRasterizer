@@ -1,19 +1,47 @@
 {
-  "version": "1.0.0-*",
-  "buildOptions": {
-    "debugType": "portable",
-    "emitEntryPoint": false
+  "name": "NOpenType",
+  "title": "NOpenType",
+  "version": "0.0.1-*",
+  "description": "Simple and clean TrueType font loader and renderer written purely in c#.",
+  "copyright": "Copyright 2016 Samuel Carlsson",
+  "authors": [
+    "Samuel Carlsson, WinterDev"
+  ],
+  "packOptions": {
+    "owners": [ "vidstige" ],
+    "licenseUrl": "https://github.com/vidstige/NRasterizer/blob/master/LICENSE.md",
+    "projectUrl": "https://github.com/vidstige/NRasterizer",
+    "iconUrl": "https://github.com/vidstige/NRasterizer/raw/master/icon.png",
+    "requireLicenseAcceptance": false,
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/vidstige/NRasterizer"
+    },
+    "tags": [
+      "font",
+      "truetype",
+      "true-type"
+    ]
   },
-  "dependencies": {},
+  "configurations": {
+    "Release": {
+      "buildOptions": {
+        "optimize": true
+      }
+    }
+  },
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+   "tools": {
+    "dotnet-version": "1.1.0"
+  },
   "frameworks": {
-    "netcoreapp1.0": {
-      "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.1"
-        }
-      },
-      "imports": "dnxcore50"
+    "netstandard1.1": {},
+    "net20": {
+      "buildOptions": {
+        "define": [ "NET20" ]
+      }
     }
   }
 }

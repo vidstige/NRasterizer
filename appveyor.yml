@@ -1,0 +1,14 @@
+version: 0.0.{build}
+install:
+- choco install gitversion.portable -pre -y
+  
+before_build:
+- ps: gitversion /l console /output buildserver /updateAssemblyInfo
+
+build_script:
+- cmd: build.cmd
+- cmd: build\generate_samples.cmd
+    
+artifacts:
+- path: NOpenType\bin\Release\*.nupkg
+- path: samples\**\*.png
