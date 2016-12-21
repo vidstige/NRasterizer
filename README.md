@@ -22,3 +22,5 @@ Below is a sample using the NRasterizer rasterizer.
 
 ## Author
 Samuel Carlsson <samuel.carlsson@gmail.com>
+
+See [contributors](https://github.com/vidstige/nrasterizer/graphs/contributors) for a full list.
