@@ -13,17 +13,16 @@ namespace NRasterizer.Tests
     public class OpenTypeReaderTests
     {
         [Test]
-        [TestCaseSource(typeof(TestFontsPaths), "AllFonts")]
-        public void LoadingFontDoesntThrowAnyExceptions(string path)
+        [TestCaseSource(typeof(TestFonts), "AllFonts")]
+        public void LoadingFontReturnsATypeface(string path)
         {
             var reader = new OpenTypeReader();
-            Assert.DoesNotThrow(() =>
+            using (var fs = File.OpenRead(path))
             {
-                using (var fs = File.OpenRead(path))
-                {
-                    reader.Read(fs);
-                }
-            });
+                var typeface = reader.Read(fs);
+
+                Assert.IsNotNull(typeface);
+            }
         }
     }
 }
