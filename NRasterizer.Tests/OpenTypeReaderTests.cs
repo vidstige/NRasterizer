@@ -13,17 +13,15 @@ namespace NRasterizer.Tests
     public class OpenTypeReaderTests
     {
         [Test]
-        [TestCase("CompositeMS.ttf")]
-        [TestCase("segoeui.ttf")]
-        [TestCase("OpenSans-Regular.ttf")]
-        public void LoadingFontDoesntThrowAnyExceptions(string fontFilename)
+        [TestCaseSource(typeof(TestFontsPaths), "AllFonts")]
+        public void LoadingFontDoesntThrowAnyExceptions(string path)
         {
             var reader = new OpenTypeReader();
             Assert.DoesNotThrow(() =>
             {
-                using (var fs = File.OpenRead($"TestFonts/{fontFilename}"))
+                using (var fs = File.OpenRead(path))
                 {
-                    var typeface = reader.Read(fs);
+                    reader.Read(fs);
                 }
             });
         }

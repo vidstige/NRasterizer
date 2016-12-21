@@ -3,6 +3,7 @@ project.lock.json
 
 # Visual Studio & MonoDevelop
 *.userprefs
+*.user
 
 # NuGet
 /packages/
@@ -11,6 +12,9 @@ project.lock.json
 
 # NUnit
 TestResult.xml
+
+# NCruch
+_NCrunch*
 
 # Font Render samples.
 /samples/
@@ -65,4 +69,5 @@ Temporary Items
 .apdisk
 
 *.suo
+
 /NOpenType/NOpenType.nuget.targets
