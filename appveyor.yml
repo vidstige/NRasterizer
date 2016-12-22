@@ -15,9 +15,9 @@ artifacts:
 
 deploy:
 - provider: S3
-  access_key_id: AKIAIE7AHJLJYXTLA2CQ
+  access_key_id: AKIAJSGZDYD54P3KCL3A
   secret_access_key:
-    secure: pFrC2o0o0eujTMUODbHF6lFa5HtbZXrQYV+2UDz9deTwakcdTAh0uTVX3hqDPh3X
+    secure: 3hozgs+ePGZ2MaO6OoEHA6bPwvaKRNTb/mEx+ak1/JwJ5I64HfzGGbW8l0iQRZDq
   region: us-west-2
   bucket: nrasterizer-artifacts
   folder: master
