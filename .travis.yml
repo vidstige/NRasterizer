@@ -1,0 +1,24 @@
+language: csharp
+solution: NRasterizer.sln
+
+matrix:
+  include:
+    - os: linux # Ubuntu 14.04
+      dist: trusty
+      sudo: required
+      dotnet: 1.0.0-preview2-003121
+      mono: latest
+
+branches:
+  only:
+    - master
+
+script:
+  - bash ./build.sh
+  - bash ./build/generate_samples.sh
+
+addons:
+  artifacts:
+    paths : 
+    - samples/**/*.png
+    - NOpenType/bin/Release/*.nupkg
