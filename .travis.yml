@@ -19,6 +19,6 @@ script:
 
 addons:
   artifacts:
-    paths : 
-    - samples/**/*.png
-    - NOpenType/bin/Release/*.nupkg
+    paths:
+        - $(find samples/ | tr "\n" ":")
+    target_paths: $TRAVIS_BRANCH
