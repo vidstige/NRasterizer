@@ -1,26 +1,7 @@
 @echo Off
-ECHO Starting build
-
-ECHO Restoring packages
-nuget restore NRasterizer.sln
-if not "%errorlevel%"=="0" goto failure
-
-dotnet restore ./NOpenType/
-if not "%errorlevel%"=="0" goto failure
-
-ECHO Running msbuild
-msbuild NRasterizer.sln /p:Configuration=Release
-if not "%errorlevel%"=="0" goto failure
-
-REM run only if gitversion has ran i.e. from appveyor    
-if not "%GitVersion_NuGetVersion%" == "" (
-    cd NOpenType
-    ECHO Setting version number to "%GitVersion_NuGetVersion%"
-    dotnet version "%GitVersion_NuGetVersion%"
-    cd ../
-    if not "%errorlevel%"=="0" goto failure
-)
-
+dotnet restore **/project.json
+dotnet build **/project.json
+dotnet test NRasterizer.Tests/
 
 REM run only if gitversion has ran i.e. from appveyor    
  if not "%GitVersion_NuGetVersion%" == "" (
