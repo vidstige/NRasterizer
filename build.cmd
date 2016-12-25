@@ -1,6 +1,13 @@
 @echo Off
-dotnet restore **/project.json
-dotnet build **/project.json
+REM dotnet restore **/project.json
+REM dotnet build **/project.json
+REM dotnet test NRasterizer.Tests/
+
+REM No glob support on Windows
+dotnet restore NOpenType/project.json
+dotnet restore NRasterizer.Tests/project.json
+dotnet build NOpenType/project.json
+dotnet build NRasterizer.Tests/project.json
 dotnet test NRasterizer.Tests/
 
 REM run only if gitversion has ran i.e. from appveyor    
