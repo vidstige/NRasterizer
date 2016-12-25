@@ -22,6 +22,15 @@ if not "%GitVersion_NuGetVersion%" == "" (
 )
 
 
+REM run only if gitversion has ran i.e. from appveyor    
+ if not "%GitVersion_NuGetVersion%" == "" (
+     cd NOpenType
+     ECHO Setting version number to "%GitVersion_NuGetVersion%"
+     dotnet version "%GitVersion_NuGetVersion%"
+     cd ../
+     if not "%errorlevel%"=="0" goto failure
+ )
+
 ECHO Building nuget packages
 if not "%GitVersion_NuGetVersion%" == "" (
 	dotnet pack -c Release ./NOpenType/project.json
