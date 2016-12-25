@@ -6,8 +6,8 @@ REM dotnet test NRasterizer.Tests/
 REM No glob support on Windows
 dotnet restore NOpenType/project.json
 dotnet restore NRasterizer.Tests/project.json
-dotnet build NOpenType/project.json
-dotnet build NRasterizer.Tests/project.json
+dotnet build --configuration Release NOpenType/project.json
+dotnet build --configuration Release NRasterizer.Tests/project.json
 dotnet test NRasterizer.Tests/
 
 REM run only if gitversion has ran i.e. from appveyor    

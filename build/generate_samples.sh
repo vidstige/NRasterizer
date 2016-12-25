@@ -1,5 +1,5 @@
 #!/bin/bash
-PROGRAM=NRasterizer.CLI/bin/Release/NRasterizer.CLI.exe
+PROGRAM=NRasterizer.CLI/bin/Release/net45/NRasterizer.CLI.exe
 
 mono $PROGRAM gdi+ Fonts/CompositeMS.ttf samples/C.png C
 
