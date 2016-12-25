@@ -37,11 +37,6 @@
     "dotnet-version": "1.1.0"
   },
   "frameworks": {
-    "netstandard1.1": {},
-    "net20": {
-      "buildOptions": {
-        "define": [ "NET20" ]
-      }
-    }
+    "netstandard1.1": {}
   }
 }

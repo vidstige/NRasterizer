@@ -5,12 +5,12 @@
   },
   "dependencies": {
     "System.Runtime.Serialization.Primitives": "4.1.1",
-    "NUnit": "3.2.0",
-    "NUnit.Runners": "3.2.0",
+    "xunit": "2.1.0",
+    "dotnet-test-xunit": "1.0.0-rc2-build10015",
     "moq": "4.6.38-alpha",
     "NOpenType": {
       "target": "project"
-    }
+    }    
   },
   "testRunner": "xunit",
   "frameworks": {
@@ -18,7 +18,7 @@
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
-          "version": "1.0.0"
+          "version": "1.0.1"
         }
       },
       "imports": [
