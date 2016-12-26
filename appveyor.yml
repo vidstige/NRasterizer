@@ -22,3 +22,6 @@ deploy:
   bucket: nrasterizer-artifacts
   folder: master
   set_public: true
+
+# AppVeyour cannot run the tests when discovered. Ran instead from build.sh
+test: off

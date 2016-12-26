@@ -1,10 +1,10 @@
 #!/bin/bash
-PROGRAM=NRasterizer.CLI/bin/Release/NRasterizer.CLI.exe
+PROGRAM="dotnet run --project NRasterizer.CLI/ --configuration Release"
 
-mono $PROGRAM gdi+ Fonts/CompositeMS.ttf samples/C.png C
+$PROGRAM gdi+ Fonts/CompositeMS.ttf samples/C.png C
 
 # Generate sample with the GDI+ rasterizer
-mono $PROGRAM gdi+ Fonts/segoeui.ttf samples/gdi/cefhijl.png cefhijl
+$PROGRAM gdi+ Fonts/segoeui.ttf samples/gdi/cefhijl.png cefhijl
 
 # Generate NRasterizer sample
-mono $PROGRAM nrasterizer Fonts/segoeui.ttf samples/clfx.png clfx
+$PROGRAM nrasterizer Fonts/segoeui.ttf samples/clfx.png clfx

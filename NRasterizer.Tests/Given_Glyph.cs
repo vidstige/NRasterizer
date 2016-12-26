@@ -1,12 +1,11 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using NUnit.Framework;
 using NRasterizer.Rasterizer;
+using Xunit;
 using Moq;
 
 namespace NRasterizer.Tests
 {
-    [TestFixture]
     public class Given_Glyph
     {
         private Renderer _renderer;
@@ -14,7 +13,6 @@ namespace NRasterizer.Tests
         private MockSequence _sequence;
         private int Scaler = 64;
 
-        [SetUp]
         public void SetUp()
         {
             _mock = new Mock<IGlyphRasterizer>(MockBehavior.Strict);
@@ -23,7 +21,6 @@ namespace NRasterizer.Tests
             _renderer = new Renderer(null, _mock.Object);
         }
 
-        [TearDown]
         public void Teardown()
         {
             _mock.VerifyAll();
@@ -56,9 +53,10 @@ namespace NRasterizer.Tests
             _mock.Setup(d => d.EndRead());
         }
 
-        [Test]
+        [Fact]
         public void With_Four_Line_Countour()
         {
+            SetUp();
             var x = new short[] { 0, 128, 128, 0 };
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, true, true };
@@ -72,11 +70,15 @@ namespace NRasterizer.Tests
             AssertContourDone();
 
             Render(new Glyph(x, y, on, new ushort[] { 3 }, null));
+
+            Teardown();
         }
 
-        [Test]
+        [Fact]
         public void With_Line_And_Bezier_Countour()
         {
+            SetUp();
+
             var x = new short[] { 0, 128, 128, 0 };
             var y = new short[] { 0, 0, 128, 128 };
             var on = new bool[] { true, true, false, true };
@@ -89,6 +91,8 @@ namespace NRasterizer.Tests
             AssertContourDone();
 
             Render(new Glyph(x, y, on, new ushort[] { 3 }, null));
+
+            Teardown();
         }
     }
 }
