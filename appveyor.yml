@@ -22,3 +22,5 @@ deploy:
   bucket: nrasterizer-artifacts
   folder: master
   set_public: true
+
+test: off
