@@ -28,7 +28,13 @@ namespace NRasterizer.Tests
 
         private void Render(Glyph glyph)
         {
-            _renderer.RenderGlyph(0, 0, 1, Scaler, glyph);
+            var renderScaler = Constants.FontToPixelDivisor / Scaler;
+
+            _renderer.RenderGlyph(new Renderer.GlyphLayout {
+                left = 0,
+                top = 0,
+                glyph = glyph
+            }, renderScaler);
         }
 
         private void StartAt(double x, double y)
@@ -84,10 +90,10 @@ namespace NRasterizer.Tests
             var on = new bool[] { true, true, false, true };
 
             // These coordinates sytems are flipped in y-direction by EM-square baseline (2048) and then scaled by 1/64
-            StartAt(0, EmSquare.Size / Scaler);
-            AssertLineTo(128 / Scaler, EmSquare.Size / Scaler);
-            AssertBezierTo(128 / Scaler, (EmSquare.Size - 128) / Scaler, 0, (EmSquare.Size - 128) / Scaler);
-            AssertLineTo(0, EmSquare.Size / Scaler);
+            StartAt(0, Constants.EmSquareSize / Scaler);
+            AssertLineTo(128 / Scaler, Constants.EmSquareSize / Scaler);
+            AssertBezierTo(128 / Scaler, (Constants.EmSquareSize - 128) / Scaler, 0, (Constants.EmSquareSize - 128) / Scaler);
+            AssertLineTo(0, Constants.EmSquareSize / Scaler);
             AssertContourDone();
 
             Render(new Glyph(x, y, on, new ushort[] { 3 }, null));

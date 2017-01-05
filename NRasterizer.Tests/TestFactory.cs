@@ -35,20 +35,26 @@ namespace NRasterizer.Tests
         }
 
         // to mean that lettersize becomes pixel size the resolution must be 72 if letterSize == EmSquare.Size
-        public static Renderer CreateRenderer(string supportedCharacters, int lettersize = EmSquare.Size, int resolution = 72)
+        public static Renderer CreateRenderer(string supportedCharacters, int lettersize = Constants.EmSquareSize, int resolution = 72)
         {
             //lets fake out a typeface with all stnadrd cahractes
-            var mockRasterizer = new Mock<IGlyphRasterizer>();
-                    
-            mockRasterizer.Setup(x => x.Resolution).Returns(72); 
+            var rasterizer = new FakeGlyphRasterizer()
+            {
+                Resolution = resolution
+            };
+            
+            return CreateRenderer(supportedCharacters, rasterizer, lettersize);
+        }
 
+        public static Renderer CreateRenderer(string supportedCharacters, IGlyphRasterizer rasterizer, int lettersize = Constants.EmSquareSize)
+        {
             var fakeTypeface = CreateTypeface(supportedCharacters, lettersize);
-            var renderer = new Renderer(fakeTypeface, mockRasterizer.Object);
+            var renderer = new Renderer(fakeTypeface, rasterizer);
 
             return renderer;
         }
 
-        public static Typeface CreateTypeface(string supportedCharacters, int lettersize = EmSquare.Size)
+        public static Typeface CreateTypeface(string supportedCharacters, int lettersize = Constants.EmSquareSize)
         {
             var characters = supportedCharacters
                 .Replace("\n", "") //should these be supported or not? will it matter???
@@ -63,7 +69,22 @@ namespace NRasterizer.Tests
             List<short> leftSideBearings = new List<short>();
             foreach (var c in characters)
             {
-                var g = new Glyph(new short[0], new short[0], new bool[0], new ushort[0], new Bounds(0,0,0,0));
+                var g = new Glyph(new short[] {
+                    (short)0,
+                    (short)lettersize
+                }, 
+                new short[] {
+                    (short)lettersize,
+                    (short)0
+                },
+                new bool[] {
+                    true,
+                    true,
+                    true
+                }, 
+                new ushort[] {
+                    1
+                }, new Bounds(0,0, (short)lettersize, (short)lettersize));
                 glyphs.Add(g);
                 letterWidths.Add((ushort)lettersize);
                 leftSideBearings.Add(0);

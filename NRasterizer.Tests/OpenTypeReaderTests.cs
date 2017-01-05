@@ -1,37 +1,45 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace NRasterizer.Tests
 {
-
-    [TestFixture]
     public class OpenTypeReaderTests
     {
-        private string rootFolder;
+        private string fontsRoot;
 
-        [SetUp]
-        public void Setup()
+        public OpenTypeReaderTests()
         {
-            this.rootFolder = Path.GetDirectoryName(new Uri(typeof(OpenTypeReaderTests).Assembly.Location).LocalPath);
+            // this might need to be conditional based on which test runner is running... i.e. appveyer might need a different path.
+            var paths = new[] {
+                "..\\Fonts", // ran from VS test explorer
+                "Fonts" // ran from build script/ root direction with dotnet test NRasterizer.Tests
+            };
+
+            this.fontsRoot  = paths.Where(x => Directory.Exists(x)).First();
         }
 
-        public static IEnumerable<string> AllFonts => new[] { "OpenSans-Regular.ttf", "segoeui.ttf", "CompositeMS.ttf" };
+        public static TheoryData<string> AllFonts => new TheoryData<string>() {
+            "OpenSans-Regular.ttf",
+            "segoeui.ttf",
+            "CompositeMS.ttf"
+        };
 
-        [Test]
-        [TestCaseSource("AllFonts")]
+        [Theory]
+        [MemberData(nameof(AllFonts))]
         public void LoadingFontReturnsATypeface(string filename)
         {
             var reader = new OpenTypeReader();
-            using (var fs = File.OpenRead($"{rootFolder}/TestFonts/{filename}"))
+            using (var fs = File.OpenRead($"{fontsRoot}/{filename}"))
             {
                 var typeface = reader.Read(fs);
 
-                Assert.IsNotNull(typeface);
+                Assert.NotNull(typeface);
             }
         }
     }

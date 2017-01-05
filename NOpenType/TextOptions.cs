@@ -19,5 +19,13 @@ namespace NRasterizer
         /// </value>
         /// <remarks> 1 point is 1/72 of an inch based on the Resolution of the <see cref="IGlyphRasterizer"/>.</remarks>
         public int FontSize { get; set; } = 10;
-   }
+
+        /// <summary>
+        /// Gets or sets the line height based on multiple of the fonts actual height.
+        /// </summary>
+        /// <value>
+        /// The height of the line.
+        /// </value>
+        public float LineHeight { get; set; } = 1;
+    }
 }

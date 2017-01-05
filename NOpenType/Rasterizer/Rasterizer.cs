@@ -51,6 +51,8 @@ namespace NRasterizer.Rasterizer
         }
 
         #region IGlyphRasterizer implementation
+        
+        public int Resolution => _target.Resolution;
 
         private readonly Raster _target;
         private Raster _flags;

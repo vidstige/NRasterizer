@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 namespace NRasterizer.Tests
 {
-    [TestFixture]
     public class CharacterMapTests
     {
-        [TestCase]
+        [Fact]
         public void CharacterToGlyphIndex_NoRangeOffset()
         {
             ushort charAsInt = 'a';
@@ -34,11 +33,10 @@ namespace NRasterizer.Tests
 
             var index = map.CharacterToGlyphIndex(charAsInt);
 
-            Assert.AreEqual(0, index);
+            Assert.Equal(0, index);
         }
-
-
-        [TestCase]
+        
+        [Fact]
         public void CharacterToGlyphIndex_WithRangeOffset()
         {
             ushort charAsInt = 'a';
@@ -63,10 +61,10 @@ namespace NRasterizer.Tests
 
             var index = map.CharacterToGlyphIndex(charAsInt);
 
-            Assert.AreEqual(54, index);
+            Assert.Equal(54, index);
         }
 
-        [TestCase]
+        [Fact]
         public void CharacterToGlyphIndex_FakeFactorMap()
         {
             var chars = new char[]
@@ -84,7 +82,7 @@ namespace NRasterizer.Tests
             for(var i = 0; i< chars.Length; i++)
             {
                 var idx = map.CharacterToGlyphIndex(chars[i]);
-                Assert.AreEqual(i, idx);
+                Assert.Equal(i, idx);
             }
         }
 

@@ -1,11 +1,12 @@
 ﻿//Apache2, 2014-2016,   WinterDev
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NRasterizer
 {
     public class Renderer
     {
-        private const int PointsPerInch = 72;
         private readonly IGlyphRasterizer _rasterizer;
         private readonly Typeface _typeface;
 
@@ -15,9 +16,18 @@ namespace NRasterizer
             _rasterizer = rasterizer;
         }
 
-        internal void RenderGlyph(int x, int y, int multiplier, int divisor, Glyph glyph)
+        /// <summary>
+        /// Renders the glyph to the configured rasterizer.
+        /// </summary>
+        /// <param name="glyphLayout">The glyph layout.</param>
+        /// <param name="scalingFactor">The scaling factor.</param>
+        internal void RenderGlyph(GlyphLayout glyphLayout, int scalingFactor)
         {
-            var rasterizer = new ToPixelRasterizer(x, y, multiplier, divisor, _rasterizer);
+            int x = glyphLayout.left;
+            int y = glyphLayout.top;
+            Glyph glyph = glyphLayout.glyph;
+
+            var rasterizer = new ToPixelRasterizer(x, y, scalingFactor, _rasterizer);
 
             ushort[] contours = glyph.EndPoints;
             short[] xs = glyph.X;
@@ -186,7 +196,52 @@ namespace NRasterizer
         /// <returns>The size of the rendered text in pixels.</returns>
         public Size Render(int x, int y, string text, TextOptions options)
         {
-            return ProcessText(x, y, text, options, true);
+            int scalingFactor = ScalingFactor(options.FontSize);
+            var glyphs = Layout(x, y, text, options).ToList();
+            int top = int.MaxValue;
+            int bottom = int.MinValue;
+            int left = int.MaxValue;
+            int right = int.MinValue;
+
+            foreach (var glyph in glyphs)
+            {
+                RenderGlyph(glyph, scalingFactor);
+
+                if (glyph.left < left)
+                {
+                    left = glyph.left;
+                }
+                if (glyph.right > right)
+                {
+                    right = glyph.right;
+                }
+
+                if (glyph.top < top)
+                {
+                    top = glyph.top;
+                }
+                if (glyph.bottom > bottom)
+                {
+                    bottom = glyph.bottom;
+                }
+            }
+            _rasterizer.Flush();
+
+            return new Size()
+            {
+                Width = ((right - left) * scalingFactor) / Constants.FontToPixelDivisor,
+                Height = ((bottom - top) * scalingFactor) / Constants.FontToPixelDivisor
+            };
+        }
+
+        /// <summary>
+        /// Calcualtes the scaling factor for the provided fontsize.
+        /// </summary>
+        /// <param name="fontSize">Size of the font.</param>
+        /// <returns></returns>
+        private int ScalingFactor(int fontSize)
+        {
+            return _rasterizer.Resolution * fontSize;
         }
 
         /// <summary>
@@ -196,47 +251,66 @@ namespace NRasterizer
         /// <returns>The size of the text in pixels os though it was rendered.</returns>
         public Size Measure(string text, TextOptions options)
         {
-            return ProcessText(0, 0, text, options, false);
+            var glyphs = Layout(0, 0, text, options);
+
+            int scalingFactor = ScalingFactor(options.FontSize);
+
+            var right = glyphs.Max(x => x.right);
+            var left = glyphs.Min(x => x.left);
+            var bottom = glyphs.Max(x => x.bottom);
+            var top = glyphs.Min(x => x.top);
+
+            return new Size()
+            {
+                Width = ((right - left) * scalingFactor) / Constants.FontToPixelDivisor,
+                Height = ((bottom - top) * scalingFactor) / Constants.FontToPixelDivisor
+            };
         }
 
-        private Size ProcessText(int x, int y, string text, TextOptions options, bool renderGlyph)
+        /// <summary>
+        /// Layouts the <paramref name="text"/> at point specified by <paramref name="x"/> and <paramref name="y"/>
+        /// based on the <paramref name="TextOptions"/>.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <param name="text">The text.</param>
+        /// <param name="options">The options.</param>
+        /// <returns>Returns a collection of <see cref="GlyphLayout"/> that describe the layout positioning of each glyph.</returns>
+        private IEnumerable<GlyphLayout> Layout(int x, int y, string text, TextOptions options)
         {
             //we are working a font sizes in here
             //convert from pixel sizes to font sizes
-            int multiplyer = _rasterizer.Resolution / PointsPerInch;
-            int divisor = EmSquare.Size / options.FontSize;
-            int xx = (int)(x * divisor) / multiplyer;
-            int yy = (int)(y * divisor) / multiplyer;
+            int scalingFactor = ScalingFactor(options.FontSize);
+            int xx = (int)(x * Constants.FontToPixelDivisor) / scalingFactor;
+            int yy = (int)(y * Constants.FontToPixelDivisor) / scalingFactor;
 
+            int drawheightEM = _typeface.Bounds.YMax - _typeface.Bounds.YMin;
+            int lineHeight = (int)(drawheightEM * options.LineHeight);
 
-            var drawheightEM = _typeface.Bounds.YMax - _typeface.Bounds.YMin;
-
-            double width = 0;
             foreach (var character in text)
             {
                 var glyph = _typeface.Lookup(character);
-
-                if (renderGlyph)
+                var glyphWidth = _typeface.GetAdvanceWidth(character);
+                yield return new GlyphLayout
                 {
-                    RenderGlyph(xx, yy, multiplyer, divisor, glyph);
-                }
-                xx += _typeface.GetAdvanceWidth(character);
+                    glyph = glyph,
+                    bottom = lineHeight + yy,
+                    right = glyphWidth + xx,
+                    left = xx,
+                    top = yy
+                };
+
+                xx += glyphWidth;
             }
+        }
 
-            if (renderGlyph)
-            {
-                _rasterizer.Flush();
-            }
-
-            var yDiff = (yy - y);
-
-            // convert back to pixel size from font sizes
-            return new Size()
-            {
-                Height = (int)(drawheightEM + yDiff) * multiplyer / divisor, //add the full draw height to the offset of the last draw position.
-                Width = (int)(width * multiplyer) / divisor
-            };
+        internal struct GlyphLayout
+        {
+            public Glyph glyph;
+            public int left;
+            public int top;
+            public int bottom;
+            public int right;
         }
     }
-
 }

@@ -10,7 +10,7 @@
     "moq": "4.6.38-alpha",
     "NOpenType": {
       "target": "project"
-    }    
+    }
   },
   "testRunner": "xunit",
   "frameworks": {
