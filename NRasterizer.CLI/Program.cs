@@ -53,58 +53,72 @@ namespace NRasterizer.CLI
         {
             const int width = 200;
             const int height = 80;
-            const int Size = 64;
-            const int Resolution = 72;
-            var raster = new Raster(width, height, width, 72);
+            const int resolution = 72;
+            var options = new TextOptions()
+            {
+                FontSize = 64
+            };
+            var raster = new Raster(width, height, width, resolution);
 
             using (var input = fontPath.OpenRead())
             {
                 var typeface = new OpenTypeReader().Read(input);
                 var rasterizer = new Rasterizer.Rasterizer(raster);
                 var renderer = new Renderer(typeface, rasterizer);
-                renderer.Render(0, 0, text, Size, Resolution);
+                renderer.Render(0, 0, text, options);
             }
 
             using (Bitmap b = new Bitmap(width, height, PixelFormat.Format8bppIndexed))
             {
-                b.SetResolution(Resolution, Resolution);
+                b.SetResolution(resolution, resolution);
                 Grayscale(b);
                 BlitTo(raster, b);
                 b.Save(target.FullName, ImageFormat.Png);
             }
         }
 
-        private void DrawGDI(FileInfo fontPath, FileInfo target, string text)
+        private void DrawGDI(FileInfo fontPath, FileInfo target, string text, bool drawbox)
         {
             const int width = 200;
             const int height = 80;
-            const int Size = 64;
-            const int Resolution = 72;
+            const int resolution = 72;
+            var options = new TextOptions()
+            {
+                FontSize = 64
+            };
+            int x = 0;
+            int y = 0;
 
             using (var input = fontPath.OpenRead())
             {
                 var typeface = new OpenTypeReader().Read(input);
                 using (Bitmap b = new Bitmap(width, height, PixelFormat.Format32bppArgb))
                 {
-                    b.SetResolution(Resolution, Resolution);
+                    b.SetResolution(resolution, resolution);
                     using (var g = Graphics.FromImage(b))
                     {
+                        g.Clear(Color.White);
                         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                        var rasterizer = new GDIGlyphRasterizer(g, Brushes.Black);
+                        var rasterizer = new GDIGlyphRasterizer(g, resolution, Brushes.Black);
                         var renderer = new Renderer(typeface, rasterizer);
-                        renderer.Render(0, 0, text, Size, Resolution);
+                        var size = renderer.Render(x, y, text, options);
+
+                        if (drawbox)
+                        {
+                            g.DrawRectangle(Pens.HotPink, new Rectangle(x, y, size.Width, size.Height));
+                        }
                     }
                     b.Save(target.FullName, ImageFormat.Png);
                 }
             }
         }
 
-        public void Draw(string rasterizerName, FileInfo fontPath, FileInfo target, string text)
+        public void Draw(string rasterizerName, FileInfo fontPath, FileInfo target, string text, bool drawbox)
         {
             target.Directory.Create();
             if (rasterizerName == "gdi+")
             {
-                DrawGDI(fontPath, target, text);
+                DrawGDI(fontPath, target, text, drawbox);
                 return;
             }
             if (rasterizerName == "nrasterizer")
@@ -120,11 +134,17 @@ namespace NRasterizer.CLI
             var rasterizerName = args[0];
             var fontPath = new FileInfo(args[1]);
             var target = new FileInfo(args[2]);
-            var text = args[3];
+            var text = args[3].Replace("\\n", "\n").Replace("\\t", "\t");
 
+            // add box to end of cmd line to draw a box outlining the measured text.
+            var drawbox = false;
+            if(args.Length > 4)
+            {
+                drawbox = args[4].Equals("box", StringComparison.OrdinalIgnoreCase);
+            }
           
             var program = new NRasterizerProgram();
-            program.Draw(rasterizerName, fontPath, target, text);
+            program.Draw(rasterizerName, fontPath, target, text, drawbox);
         }
     }
 }

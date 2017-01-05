@@ -12,10 +12,13 @@ namespace NRasterizer.CLI
         private Graphics _graphics;
         private Brush _brush;
 
-        public GDIGlyphRasterizer(Graphics g, Brush brush)
+        public int Resolution { get; }
+
+        public GDIGlyphRasterizer(Graphics g, int resolution, Brush brush)
         {
             _graphics = g;
             _brush = brush;
+            Resolution = resolution;
             ps = new System.Drawing.Drawing2D.GraphicsPath();
         }
 

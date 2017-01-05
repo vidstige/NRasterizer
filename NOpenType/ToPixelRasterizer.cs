@@ -2,7 +2,14 @@
 
 namespace NRasterizer
 {
-    public class ToPixelRasterizer: IGlyphRasterizer
+    /// <summary>
+    /// Converts from glyph point based values into pixel based ones
+    /// </summary>
+    /// <remarks>
+    /// This is a struct because its super short lived and it prevents the need for an allocation for each character rendered.
+    /// This is internal as it will only ever be used by the <see cref="Renderer"/> and should not be used by external systems.
+    /// </remarks>
+    internal struct ToPixelRasterizer
     {
         private readonly IGlyphRasterizer _inner;
         private readonly float _x;
@@ -10,10 +17,10 @@ namespace NRasterizer
         private readonly int _m;
         private readonly int _d;
 
-        public ToPixelRasterizer(float x, float y, int multiplyer, int divider, IGlyphRasterizer inner)
+        public ToPixelRasterizer(int x, int y, int multiplyer, int divider, IGlyphRasterizer inner)
         {
             _x = x;
-            _y = y;
+            _y = y + EmSquare.Size;
             _m = multiplyer;
             _d = divider;
             _inner = inner;
@@ -25,7 +32,7 @@ namespace NRasterizer
         }
         private double Y(double y)
         {
-            return _m * (_y + EmSquare.Size - y) / _d;
+            return _m * (_y - y) / _d;
         }
 
         #region IGlyphRasterizer implementation

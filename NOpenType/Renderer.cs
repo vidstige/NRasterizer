@@ -8,8 +8,6 @@ namespace NRasterizer
         private const int PointsPerInch = 72;
         private readonly IGlyphRasterizer _rasterizer;
         private readonly Typeface _typeface;
-        private const int pointsPerInch = 72;
-        private const double FT_RESIZE = 64; //essential to be floating point
 
         public Renderer(Typeface typeface, IGlyphRasterizer rasterizer)
         {
@@ -17,9 +15,9 @@ namespace NRasterizer
             _rasterizer = rasterizer;
         }
 
-        public void RenderGlyph(int x, int y, int m, int d, Glyph glyph)
+        internal void RenderGlyph(int x, int y, int multiplier, int divisor, Glyph glyph)
         {
-            var rasterizer = new ToPixelRasterizer(x, y, m, d, _rasterizer);
+            var rasterizer = new ToPixelRasterizer(x, y, multiplier, divisor, _rasterizer);
 
             ushort[] contours = glyph.EndPoints;
             short[] xs = glyph.X;
@@ -68,7 +66,7 @@ namespace NRasterizer
                                 case 2:
                                     {
                                         rasterizer.Curve4(
-                                                secondControlPoint.x,  secondControlPoint.y,
+                                                secondControlPoint.x, secondControlPoint.y,
                                                 thirdControlPoint.x, thirdControlPoint.y,
                                                 vpoint_x, vpoint_y);
                                     }
@@ -179,23 +177,65 @@ namespace NRasterizer
             return new Point<int>((v1.x + v2.x) / 2, (v1.y + v2.y) / 2);
         }
 
-        private int ToPixels(int funits, int pointSize, int dpi)
+        /// <summary>
+        /// Renders the specified text at the specified X and Y position.
+        /// </summary>
+        /// <param name="x">The x postion in pixels to draw the text.</param>
+        /// <param name="y">The y postion in pixels to draw the text.</param>
+        /// <param name="text">The text.</param>
+        /// <returns>The size of the rendered text in pixels.</returns>
+        public Size Render(int x, int y, string text, TextOptions options)
         {
-            return funits * pointSize * dpi / (EmSquare.Size * pointsPerInch);
+            return ProcessText(x, y, text, options, true);
         }
 
-        public void Render(int x, int y, string text, int size, int resolution)
+        /// <summary>
+        /// Measures the specified text in pixels,
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns>The size of the text in pixels os though it was rendered.</returns>
+        public Size Measure(string text, TextOptions options)
         {
-            int xx = x * EmSquare.Size * PointsPerInch;
-            int yy = y * EmSquare.Size * PointsPerInch;
-            int m = size * resolution;
-            int d = EmSquare.Size * PointsPerInch;
+            return ProcessText(0, 0, text, options, false);
+        }
+
+        private Size ProcessText(int x, int y, string text, TextOptions options, bool renderGlyph)
+        {
+            //we are working a font sizes in here
+            //convert from pixel sizes to font sizes
+            int multiplyer = _rasterizer.Resolution / PointsPerInch;
+            int divisor = EmSquare.Size / options.FontSize;
+            int xx = (int)(x * divisor) / multiplyer;
+            int yy = (int)(y * divisor) / multiplyer;
+
+
+            var drawheightEM = _typeface.Bounds.YMax - _typeface.Bounds.YMin;
+
+            double width = 0;
             foreach (var character in text)
             {
-                RenderGlyph(xx, yy, m, d, _typeface.Lookup(character));
+                var glyph = _typeface.Lookup(character);
+
+                if (renderGlyph)
+                {
+                    RenderGlyph(xx, yy, multiplyer, divisor, glyph);
+                }
                 xx += _typeface.GetAdvanceWidth(character);
             }
-            _rasterizer.Flush();
+
+            if (renderGlyph)
+            {
+                _rasterizer.Flush();
+            }
+
+            var yDiff = (yy - y);
+
+            // convert back to pixel size from font sizes
+            return new Size()
+            {
+                Height = (int)(drawheightEM + yDiff) * multiplyer / divisor, //add the full draw height to the offset of the last draw position.
+                Width = (int)(width * multiplyer) / divisor
+            };
         }
     }
 
