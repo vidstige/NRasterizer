@@ -7,6 +7,10 @@ namespace NRasterizer
 {
     public class Renderer
     {
+        private const int PointsPerInch = 72;
+
+        internal const int FontToPixelDivisor = EmSquare.Size * PointsPerInch;
+        
         private readonly IGlyphRasterizer _rasterizer;
         private readonly Typeface _typeface;
 
@@ -27,7 +31,7 @@ namespace NRasterizer
             int y = glyphLayout.top;
             Glyph glyph = glyphLayout.glyph;
 
-            var rasterizer = new ToPixelRasterizer(x, y, scalingFactor, _rasterizer);
+            var rasterizer = new ToPixelRasterizer(x, y, scalingFactor, FontToPixelDivisor, _rasterizer);
 
             ushort[] contours = glyph.EndPoints;
             short[] xs = glyph.X;
@@ -229,8 +233,8 @@ namespace NRasterizer
 
             return new Size()
             {
-                Width = ((right - left) * scalingFactor) / Constants.FontToPixelDivisor,
-                Height = ((bottom - top) * scalingFactor) / Constants.FontToPixelDivisor
+                Width = ((right - left) * scalingFactor) / Renderer.FontToPixelDivisor,
+                Height = ((bottom - top) * scalingFactor) / Renderer.FontToPixelDivisor
             };
         }
 
@@ -262,8 +266,8 @@ namespace NRasterizer
 
             return new Size()
             {
-                Width = ((right - left) * scalingFactor) / Constants.FontToPixelDivisor,
-                Height = ((bottom - top) * scalingFactor) / Constants.FontToPixelDivisor
+                Width = ((right - left) * scalingFactor) / Renderer.FontToPixelDivisor,
+                Height = ((bottom - top) * scalingFactor) / Renderer.FontToPixelDivisor
             };
         }
 
@@ -281,8 +285,8 @@ namespace NRasterizer
             //we are working a font sizes in here
             //convert from pixel sizes to font sizes
             int scalingFactor = ScalingFactor(options.FontSize);
-            int xx = (int)(x * Constants.FontToPixelDivisor) / scalingFactor;
-            int yy = (int)(y * Constants.FontToPixelDivisor) / scalingFactor;
+            int xx = (int)(x * FontToPixelDivisor) / scalingFactor;
+            int yy = (int)(y * FontToPixelDivisor) / scalingFactor;
 
             int drawheightEM = _typeface.Bounds.YMax - _typeface.Bounds.YMin;
             int lineHeight = (int)(drawheightEM * options.LineHeight);

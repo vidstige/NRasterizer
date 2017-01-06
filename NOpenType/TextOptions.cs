@@ -29,3 +29,4 @@ namespace NRasterizer
         public float LineHeight { get; set; } = 1;
     }
 }
+

@@ -35,7 +35,7 @@ namespace NRasterizer.Tests
         }
 
         // to mean that lettersize becomes pixel size the resolution must be 72 if letterSize == EmSquare.Size
-        public static Renderer CreateRenderer(string supportedCharacters, int lettersize = Constants.EmSquareSize, int resolution = 72)
+        public static Renderer CreateRenderer(string supportedCharacters, int lettersize = EmSquare.Size, int resolution = 72)
         {
             //lets fake out a typeface with all stnadrd cahractes
             var rasterizer = new FakeGlyphRasterizer()
@@ -46,7 +46,7 @@ namespace NRasterizer.Tests
             return CreateRenderer(supportedCharacters, rasterizer, lettersize);
         }
 
-        public static Renderer CreateRenderer(string supportedCharacters, IGlyphRasterizer rasterizer, int lettersize = Constants.EmSquareSize)
+        public static Renderer CreateRenderer(string supportedCharacters, IGlyphRasterizer rasterizer, int lettersize = EmSquare.Size)
         {
             var fakeTypeface = CreateTypeface(supportedCharacters, lettersize);
             var renderer = new Renderer(fakeTypeface, rasterizer);
@@ -54,7 +54,7 @@ namespace NRasterizer.Tests
             return renderer;
         }
 
-        public static Typeface CreateTypeface(string supportedCharacters, int lettersize = Constants.EmSquareSize)
+        public static Typeface CreateTypeface(string supportedCharacters, int lettersize = EmSquare.Size)
         {
             var characters = supportedCharacters
                 .Replace("\n", "") //should these be supported or not? will it matter???

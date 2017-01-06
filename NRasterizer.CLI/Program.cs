@@ -129,12 +129,19 @@ namespace NRasterizer.CLI
             throw new ApplicationException("Unknown rasterizer: " + rasterizerName);
         }
 
+        private static string UnescapeWhitespace(string str)
+        {
+            return str
+                .Replace("\\n", "\n")
+                .Replace("\\t", "\t");
+        }
+
         public static void Main(string[] args)
         {
             var rasterizerName = args[0];
             var fontPath = new FileInfo(args[1]);
             var target = new FileInfo(args[2]);
-            var text = args[3].Replace("\\n", "\n").Replace("\\t", "\t");
+            var text = UnescapeWhitespace(args[3]);
 
             // add box to end of cmd line to draw a box outlining the measured text.
             var drawbox = false;

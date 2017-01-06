@@ -15,22 +15,24 @@ namespace NRasterizer
         private readonly float _x;
         private readonly float _y;
         private readonly int _scalingFactor;
+        private readonly int _divider;
 
-        public ToPixelRasterizer(int x, int y, int scalingFactor, IGlyphRasterizer inner)
+        public ToPixelRasterizer(int x, int y, int scalingFactor, int divider, IGlyphRasterizer inner)
         {
             _x = x;
-            _y = y + Constants.EmSquareSize;
+            _y = y + EmSquare.Size;
             _scalingFactor = scalingFactor;
+            _divider = divider;
             _inner = inner;
         }
 
         private double X(double x)
         {
-            return (_scalingFactor * (_x + x)) / Constants.FontToPixelDivisor;
+            return (_scalingFactor * (_x + x)) / _divider;
         }
         private double Y(double y)
         {
-            return (_scalingFactor * (_y - y)) / Constants.FontToPixelDivisor;
+            return (_scalingFactor * (_y - y)) / _divider;
         }
 
         public void BeginRead(int countourCount)
@@ -71,4 +73,3 @@ namespace NRasterizer
         }
     }
 }
-
