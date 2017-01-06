@@ -14,20 +14,11 @@ namespace NRasterizer.Tests
         {
             ushort charAsInt = 'a';
             var segCount = 1;
-            var startCodes = new ushort[] {
-                charAsInt
-            };
-            var endCodes = new ushort[] {
-                charAsInt
-            };
-            var idDeltas = new ushort[] {
-                (ushort) (65536 - charAsInt)
-            };
-            var idRangeOffset = new ushort[] {
-                0
-            };
-            var glyphIdArray = new ushort[] {
-            };
+            var startCodes = new ushort[] { charAsInt };
+            var endCodes = new ushort[] { charAsInt };
+            var idDeltas = new ushort[] { (ushort)(65536 - charAsInt) };
+            var idRangeOffset = new ushort[] { 0 };
+            var glyphIdArray = new ushort[] { };
 
             var map = new CharacterMap(segCount, startCodes, endCodes, idDeltas, idRangeOffset, glyphIdArray);
 
@@ -35,27 +26,17 @@ namespace NRasterizer.Tests
 
             Assert.Equal(0, index);
         }
-        
+
         [Fact]
         public void CharacterToGlyphIndex_WithRangeOffset()
         {
             ushort charAsInt = 'a';
             var segCount = 1;
-            var startCodes = new ushort[] {
-                charAsInt
-            };
-            var endCodes = new ushort[] {
-                charAsInt
-            };
-            var idDeltas = new ushort[] {
-                (ushort) (65536 - charAsInt)
-            };
-            var idRangeOffset = new ushort[] {
-                2
-            };
-            var glyphIdArray = new ushort[] {
-                54
-            };
+            var startCodes = new ushort[] { charAsInt };
+            var endCodes = new ushort[] { charAsInt };
+            var idDeltas = new ushort[] { (ushort)(65536 - charAsInt) };
+            var idRangeOffset = new ushort[] { 2 };
+            var glyphIdArray = new ushort[] { 54 };
 
             var map = new CharacterMap(segCount, startCodes, endCodes, idDeltas, idRangeOffset, glyphIdArray);
 
@@ -79,12 +60,12 @@ namespace NRasterizer.Tests
 
             var map = TestFactory.CreateCharacterMap(chars);
 
-            for(var i = 0; i< chars.Length; i++)
+            for (var i = 0; i < chars.Length; i++)
             {
                 var idx = map.CharacterToGlyphIndex(chars[i]);
                 Assert.Equal(i, idx);
             }
         }
-
     }
 }
+

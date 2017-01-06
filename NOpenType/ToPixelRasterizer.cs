@@ -2,14 +2,14 @@
 
 namespace NRasterizer
 {
+    // TODO This is currently instanciated per glyph... should be new up per renderer?
     /// <summary>
     /// Converts from glyph point based values into pixel based ones
     /// </summary>
     /// <remarks>
-    /// This is a struct because its super short lived and it prevents the need for an allocation for each character rendered.
     /// This is internal as it will only ever be used by the <see cref="Renderer"/> and should not be used by external systems.
     /// </remarks>
-    internal struct ToPixelRasterizer
+    internal class ToPixelRasterizer
     {
         private readonly IGlyphRasterizer _inner;
         private readonly float _x;
@@ -63,10 +63,12 @@ namespace NRasterizer
                 X(x), Y(y));
             
         }
+
         public void MoveTo(double x, double y)
         {
             _inner.MoveTo(X(x), Y(y));
         }
+
         public void CloseFigure()
         {
             _inner.CloseFigure();

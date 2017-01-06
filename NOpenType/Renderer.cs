@@ -10,7 +10,7 @@ namespace NRasterizer
         private const int PointsPerInch = 72;
 
         internal const int FontToPixelDivisor = EmSquare.Size * PointsPerInch;
-        
+
         private readonly IGlyphRasterizer _rasterizer;
         private readonly Typeface _typeface;
 
@@ -27,8 +27,8 @@ namespace NRasterizer
         /// <param name="scalingFactor">The scaling factor.</param>
         internal void RenderGlyph(GlyphLayout glyphLayout, int scalingFactor)
         {
-            int x = glyphLayout.left;
-            int y = glyphLayout.top;
+            int x = glyphLayout.TopLeft.X;
+            int y = glyphLayout.TopLeft.Y;
             Glyph glyph = glyphLayout.glyph;
 
             var rasterizer = new ToPixelRasterizer(x, y, scalingFactor, FontToPixelDivisor, _rasterizer);
@@ -198,44 +198,16 @@ namespace NRasterizer
         /// <param name="y">The y postion in pixels to draw the text.</param>
         /// <param name="text">The text.</param>
         /// <returns>The size of the rendered text in pixels.</returns>
-        public Size Render(int x, int y, string text, TextOptions options)
+        public void Render(int x, int y, string text, TextOptions options)
         {
             int scalingFactor = ScalingFactor(options.FontSize);
             var glyphs = Layout(x, y, text, options).ToList();
-            int top = int.MaxValue;
-            int bottom = int.MinValue;
-            int left = int.MaxValue;
-            int right = int.MinValue;
-
-            foreach (var glyph in glyphs)
+            
+            foreach (var layout in glyphs)
             {
-                RenderGlyph(glyph, scalingFactor);
-
-                if (glyph.left < left)
-                {
-                    left = glyph.left;
-                }
-                if (glyph.right > right)
-                {
-                    right = glyph.right;
-                }
-
-                if (glyph.top < top)
-                {
-                    top = glyph.top;
-                }
-                if (glyph.bottom > bottom)
-                {
-                    bottom = glyph.bottom;
-                }
+                RenderGlyph(layout, scalingFactor);
             }
-            _rasterizer.Flush();
-
-            return new Size()
-            {
-                Width = ((right - left) * scalingFactor) / Renderer.FontToPixelDivisor,
-                Height = ((bottom - top) * scalingFactor) / Renderer.FontToPixelDivisor
-            };
+            _rasterizer.Flush();            
         }
 
         /// <summary>
@@ -259,15 +231,15 @@ namespace NRasterizer
 
             int scalingFactor = ScalingFactor(options.FontSize);
 
-            var right = glyphs.Max(x => x.right);
-            var left = glyphs.Min(x => x.left);
-            var bottom = glyphs.Max(x => x.bottom);
-            var top = glyphs.Min(x => x.top);
+            var right = glyphs.Max(x => x.BottomRight.X);
+            var left = glyphs.Min(x => x.TopLeft.X);
+            var bottom = glyphs.Max(x => x.BottomRight.Y);
+            var top = glyphs.Min(x => x.TopLeft.Y);
 
             return new Size()
             {
-                Width = ((right - left) * scalingFactor) / Renderer.FontToPixelDivisor,
-                Height = ((bottom - top) * scalingFactor) / Renderer.FontToPixelDivisor
+                Width = ((right - left) * scalingFactor) / FontToPixelDivisor,
+                Height = ((bottom - top) * scalingFactor) / FontToPixelDivisor
             };
         }
 
@@ -298,10 +270,8 @@ namespace NRasterizer
                 yield return new GlyphLayout
                 {
                     glyph = glyph,
-                    bottom = lineHeight + yy,
-                    right = glyphWidth + xx,
-                    left = xx,
-                    top = yy
+                    TopLeft = new Point<int>(xx, yy),
+                    BottomRight = new Point<int>(glyphWidth + xx, lineHeight + yy)
                 };
 
                 xx += glyphWidth;
@@ -311,10 +281,9 @@ namespace NRasterizer
         internal struct GlyphLayout
         {
             public Glyph glyph;
-            public int left;
-            public int top;
-            public int bottom;
-            public int right;
+            public Point<int> TopLeft;
+            public Point<int> BottomRight;
         }
     }
 }
+

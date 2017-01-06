@@ -12,18 +12,18 @@ namespace NRasterizer.Tests
         public int ContourCount { get; private set; }
         public int EndReadCallCount { get; private set; }
         public int FlushCallCount { get; private set; }
-        public List<Point<double>> Points { get; set; } = new List<Point<double>>();
+        public List<Point<double>> Points { get; private set; } = new List<Point<double>>();
         public int Resolution { get; set; } =  72;
 
         public void BeginRead(int countourCount)
         {
-            this.BeginReadCallCount++;
-            this.ContourCount = countourCount;
+            BeginReadCallCount++;
+            ContourCount = countourCount;
         }
 
         public void CloseFigure()
         {
-            this.CloseFigureCallCount++;
+            CloseFigureCallCount++;
         }
 
         public void Curve3(double p2x, double p2y, double x, double y)
@@ -38,12 +38,12 @@ namespace NRasterizer.Tests
 
         public void EndRead()
         {
-            this.EndReadCallCount++;
+            EndReadCallCount++;
         }
 
         public void Flush()
         {
-            this.FlushCallCount++;
+            FlushCallCount++;
         }
 
         public void LineTo(double x, double y)
@@ -57,3 +57,4 @@ namespace NRasterizer.Tests
         }
     }
 }
+

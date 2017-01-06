@@ -101,10 +101,11 @@ namespace NRasterizer.CLI
                         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                         var rasterizer = new GDIGlyphRasterizer(g, resolution, Brushes.Black);
                         var renderer = new Renderer(typeface, rasterizer);
-                        var size = renderer.Render(x, y, text, options);
+                        renderer.Render(x, y, text, options);
 
                         if (drawbox)
                         {
+                            var size = renderer.Measure(text, options);
                             g.DrawRectangle(Pens.HotPink, new Rectangle(x, y, size.Width, size.Height));
                         }
                     }

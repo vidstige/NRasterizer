@@ -37,7 +37,8 @@ namespace NRasterizer.Tests
         [Theory]
         [InlineData("a", 10, 10, 10, 20, 20)] 
         [InlineData("ab", 1, 10, 10, 12, 11)] 
-        [InlineData("a\nb", 1, 10, 10, 13, 11)]
+        [InlineData("a\nb", 1, 10, 10, 13, 11)] // this will break once newline support is added.
+        [InlineData("a\tb", 1, 10, 10, 13, 11)] // this will break once tab support is added.
         public void RenderText(string text, int fontsize, int startX, int startY, int lastX, int lastY)
         {
             var rasterizer = new FakeGlyphRasterizer();
@@ -51,7 +52,7 @@ namespace NRasterizer.Tests
                 FontSize = fontsize
             };
 
-            var size = renderer.Render(startX, startY, text, options);
+            renderer.Render(startX, startY, text, options);
 
             var start = rasterizer.Points.First();
             var end = rasterizer.Points.Last();
@@ -60,10 +61,7 @@ namespace NRasterizer.Tests
             Assert.Equal(startY, start.Y);
             
             Assert.Equal(lastX, end.X);
-            Assert.Equal(lastY, end.Y);
-            
-            Assert.Equal(fontsize * text.Length, size.Width);
-            Assert.Equal(fontsize, size.Height);
+            Assert.Equal(lastY, end.Y);            
         }
     }
 }
