@@ -4,6 +4,8 @@ namespace NRasterizer
 {
     public interface IGlyphRasterizer
     {
+        int Resolution { get; }
+
         void BeginRead(int countourCount);
         void EndRead();
 

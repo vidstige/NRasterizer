@@ -2,9 +2,8 @@
 
 namespace NRasterizer
 {
-    public static class EmSquare
+    internal static class EmSquare
     {
         public const short Size = 2048;
     }
 }
-

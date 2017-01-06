@@ -28,7 +28,11 @@ namespace NRasterizer.Tests
 
         private void Render(Glyph glyph)
         {
-            _renderer.RenderGlyph(0, 0, 1, Scaler, glyph);
+            var renderScaler = Renderer.FontToPixelDivisor / Scaler;
+
+            _renderer.RenderGlyph(new Renderer.GlyphLayout {
+                glyph = glyph
+            }, renderScaler);
         }
 
         private void StartAt(double x, double y)

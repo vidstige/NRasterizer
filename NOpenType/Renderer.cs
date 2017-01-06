@@ -1,15 +1,18 @@
 ﻿//Apache2, 2014-2016,   WinterDev
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NRasterizer
 {
     public class Renderer
     {
         private const int PointsPerInch = 72;
+
+        internal const int FontToPixelDivisor = EmSquare.Size * PointsPerInch;
+
         private readonly IGlyphRasterizer _rasterizer;
         private readonly Typeface _typeface;
-        private const int pointsPerInch = 72;
-        private const double FT_RESIZE = 64; //essential to be floating point
 
         public Renderer(Typeface typeface, IGlyphRasterizer rasterizer)
         {
@@ -17,9 +20,18 @@ namespace NRasterizer
             _rasterizer = rasterizer;
         }
 
-        public void RenderGlyph(int x, int y, int m, int d, Glyph glyph)
+        /// <summary>
+        /// Renders the glyph to the configured rasterizer.
+        /// </summary>
+        /// <param name="glyphLayout">The glyph layout.</param>
+        /// <param name="scalingFactor">The scaling factor.</param>
+        internal void RenderGlyph(GlyphLayout glyphLayout, int scalingFactor)
         {
-            var rasterizer = new ToPixelRasterizer(x, y, m, d, _rasterizer);
+            int x = glyphLayout.TopLeft.X;
+            int y = glyphLayout.TopLeft.Y;
+            Glyph glyph = glyphLayout.glyph;
+
+            var rasterizer = new ToPixelRasterizer(x, y, scalingFactor, FontToPixelDivisor, _rasterizer);
 
             ushort[] contours = glyph.EndPoints;
             short[] xs = glyph.X;
@@ -68,7 +80,7 @@ namespace NRasterizer
                                 case 2:
                                     {
                                         rasterizer.Curve4(
-                                                secondControlPoint.x,  secondControlPoint.y,
+                                                secondControlPoint.x, secondControlPoint.y,
                                                 thirdControlPoint.x, thirdControlPoint.y,
                                                 vpoint_x, vpoint_y);
                                     }
@@ -179,24 +191,99 @@ namespace NRasterizer
             return new Point<int>((v1.x + v2.x) / 2, (v1.y + v2.y) / 2);
         }
 
-        private int ToPixels(int funits, int pointSize, int dpi)
+        /// <summary>
+        /// Renders the specified text at the specified X and Y position.
+        /// </summary>
+        /// <param name="x">The x postion in pixels to draw the text.</param>
+        /// <param name="y">The y postion in pixels to draw the text.</param>
+        /// <param name="text">The text.</param>
+        /// <returns>The size of the rendered text in pixels.</returns>
+        public void Render(int x, int y, string text, TextOptions options)
         {
-            return funits * pointSize * dpi / (EmSquare.Size * pointsPerInch);
+            int scalingFactor = ScalingFactor(options.FontSize);
+            var glyphs = Layout(x, y, text, options).ToList();
+            
+            foreach (var layout in glyphs)
+            {
+                RenderGlyph(layout, scalingFactor);
+            }
+            _rasterizer.Flush();            
         }
 
-        public void Render(int x, int y, string text, int size, int resolution)
+        /// <summary>
+        /// Calcualtes the scaling factor for the provided fontsize.
+        /// </summary>
+        /// <param name="fontSize">Size of the font.</param>
+        /// <returns></returns>
+        private int ScalingFactor(int fontSize)
         {
-            int xx = x * EmSquare.Size * PointsPerInch;
-            int yy = y * EmSquare.Size * PointsPerInch;
-            int m = size * resolution;
-            int d = EmSquare.Size * PointsPerInch;
+            return _rasterizer.Resolution * fontSize;
+        }
+
+        /// <summary>
+        /// Measures the specified text in pixels,
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns>The size of the text in pixels os though it was rendered.</returns>
+        public Size Measure(string text, TextOptions options)
+        {
+            var glyphs = Layout(0, 0, text, options);
+
+            int scalingFactor = ScalingFactor(options.FontSize);
+
+            var right = glyphs.Max(x => x.BottomRight.X);
+            var left = glyphs.Min(x => x.TopLeft.X);
+            var bottom = glyphs.Max(x => x.BottomRight.Y);
+            var top = glyphs.Min(x => x.TopLeft.Y);
+
+            return new Size()
+            {
+                Width = ((right - left) * scalingFactor) / FontToPixelDivisor,
+                Height = ((bottom - top) * scalingFactor) / FontToPixelDivisor
+            };
+        }
+
+        /// <summary>
+        /// Layouts the <paramref name="text"/> at point specified by <paramref name="x"/> and <paramref name="y"/>
+        /// based on the <paramref name="TextOptions"/>.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <param name="text">The text.</param>
+        /// <param name="options">The options.</param>
+        /// <returns>Returns a collection of <see cref="GlyphLayout"/> that describe the layout positioning of each glyph.</returns>
+        private IEnumerable<GlyphLayout> Layout(int x, int y, string text, TextOptions options)
+        {
+            //we are working a font sizes in here
+            //convert from pixel sizes to font sizes
+            int scalingFactor = ScalingFactor(options.FontSize);
+            int xx = (int)(x * FontToPixelDivisor) / scalingFactor;
+            int yy = (int)(y * FontToPixelDivisor) / scalingFactor;
+
+            int drawheightEM = _typeface.Bounds.YMax - _typeface.Bounds.YMin;
+            int lineHeight = (int)(drawheightEM * options.LineHeight);
+
             foreach (var character in text)
             {
-                RenderGlyph(xx, yy, m, d, _typeface.Lookup(character));
-                xx += _typeface.GetAdvanceWidth(character);
+                var glyph = _typeface.Lookup(character);
+                var glyphWidth = _typeface.GetAdvanceWidth(character);
+                yield return new GlyphLayout
+                {
+                    glyph = glyph,
+                    TopLeft = new Point<int>(xx, yy),
+                    BottomRight = new Point<int>(glyphWidth + xx, lineHeight + yy)
+                };
+
+                xx += glyphWidth;
             }
-            _rasterizer.Flush();
+        }
+
+        internal struct GlyphLayout
+        {
+            public Glyph glyph;
+            public Point<int> TopLeft;
+            public Point<int> BottomRight;
         }
     }
-
 }
+

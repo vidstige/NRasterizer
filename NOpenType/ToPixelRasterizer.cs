@@ -2,33 +2,38 @@
 
 namespace NRasterizer
 {
-    public class ToPixelRasterizer: IGlyphRasterizer
+    // TODO This is currently instanciated per glyph... should be new up per renderer?
+    /// <summary>
+    /// Converts from glyph point based values into pixel based ones
+    /// </summary>
+    /// <remarks>
+    /// This is internal as it will only ever be used by the <see cref="Renderer"/> and should not be used by external systems.
+    /// </remarks>
+    internal class ToPixelRasterizer
     {
         private readonly IGlyphRasterizer _inner;
         private readonly float _x;
         private readonly float _y;
-        private readonly int _m;
-        private readonly int _d;
+        private readonly int _scalingFactor;
+        private readonly int _divider;
 
-        public ToPixelRasterizer(float x, float y, int multiplyer, int divider, IGlyphRasterizer inner)
+        public ToPixelRasterizer(int x, int y, int scalingFactor, int divider, IGlyphRasterizer inner)
         {
             _x = x;
-            _y = y;
-            _m = multiplyer;
-            _d = divider;
+            _y = y + EmSquare.Size;
+            _scalingFactor = scalingFactor;
+            _divider = divider;
             _inner = inner;
         }
 
         private double X(double x)
         {
-            return _m * (_x + x) / _d;
+            return (_scalingFactor * (_x + x)) / _divider;
         }
         private double Y(double y)
         {
-            return _m * (_y + EmSquare.Size - y) / _d;
+            return (_scalingFactor * (_y - y)) / _divider;
         }
-
-        #region IGlyphRasterizer implementation
 
         public void BeginRead(int countourCount)
         {
@@ -58,21 +63,15 @@ namespace NRasterizer
                 X(x), Y(y));
             
         }
+
         public void MoveTo(double x, double y)
         {
             _inner.MoveTo(X(x), Y(y));
         }
+
         public void CloseFigure()
         {
             _inner.CloseFigure();
         }
-
-        public void Flush()
-        {
-            _inner.Flush();
-        }
-
-        #endregion
     }
 }
-
