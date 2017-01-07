@@ -30,6 +30,9 @@ namespace NRasterizer.CLI
 
         public void EndRead()
         {
+            // fill after each glyph so overlapping text renders correctly.
+            _graphics.FillPath(_brush, ps);
+            ps.Reset();
         }
 
         public void CloseFigure()
@@ -85,7 +88,6 @@ namespace NRasterizer.CLI
 
         public void Flush()
         {
-            _graphics.FillPath(_brush, ps);
         }
 
         #endregion

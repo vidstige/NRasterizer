@@ -26,7 +26,10 @@ namespace NRasterizer
         /// <value>
         /// The height of the line.
         /// </value>
-        public float LineHeight { get; set; } = 1;
+        /// <remarks>
+        /// Default is 1.25 the standard glyph height as it makes for a nicer line seperation for a default rendering.
+        /// </remarks>
+        public float LineHeight { get; set; } = 1.25f; 
     }
 }
 

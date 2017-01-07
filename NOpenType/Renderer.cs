@@ -259,22 +259,40 @@ namespace NRasterizer
             int scalingFactor = ScalingFactor(options.FontSize);
             int xx = (int)(x * FontToPixelDivisor) / scalingFactor;
             int yy = (int)(y * FontToPixelDivisor) / scalingFactor;
-
-            int drawheightEM = _typeface.Bounds.YMax - _typeface.Bounds.YMin;
-            int lineHeight = (int)(drawheightEM * options.LineHeight);
+            int startXX = xx;
+            
+            // this will need looking at as I don't know if there somethign inside a font that should tell us the real base lineheight, this renders nicely in my tests.
+            int lineHeight = (int)(EmSquare.Size * options.LineHeight);
 
             foreach (var character in text)
             {
-                var glyph = _typeface.Lookup(character);
-                var glyphWidth = _typeface.GetAdvanceWidth(character);
-                yield return new GlyphLayout
+                switch (character)
                 {
-                    glyph = glyph,
-                    TopLeft = new Point<int>(xx, yy),
-                    BottomRight = new Point<int>(glyphWidth + xx, lineHeight + yy)
-                };
+                    case '\r':
+                        // carrage return resets the XX cordinate to startXX 
+                        xx = startXX;
+                        break;
+                    case '\n':
+                        // newline/line feed resets the XX cordinate to startXX  
+                        // and add a line height to the current YY
+                        xx = startXX;
+                        yy += lineHeight;
+                        break;
+                    default:
+                        var glyph = _typeface.Lookup(character);
+                        var glyphWidth = _typeface.GetAdvanceWidth(character);
+                        // remove the min for EM square to calculate the final 'height' for the glyph from the origin because fonts need flipping to work sensibly.
+                        int drawheightEM = EmSquare.Size - glyph.Bounds.YMin; 
+                        yield return new GlyphLayout
+                        {
+                            glyph = glyph,
+                            TopLeft = new Point<int>(xx, yy),
+                            BottomRight = new Point<int>(glyphWidth + xx, drawheightEM + yy)
+                        };
 
-                xx += glyphWidth;
+                        xx += glyphWidth;
+                        break;
+                }
             }
         }
 
