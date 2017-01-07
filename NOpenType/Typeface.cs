@@ -10,11 +10,13 @@ namespace NRasterizer
         private readonly List<Glyph> _glyphs;
         private readonly List<CharacterMap> _cmaps;
         private readonly HorizontalMetrics _horizontalMetrics;
+        private readonly int _lineSpacing;
 
-        internal Typeface(Bounds bounds, ushort unitsPerEm, List<Glyph> glyphs, List<CharacterMap> cmaps, HorizontalMetrics horizontalMetrics)
+        internal Typeface(Bounds bounds, ushort unitsPerEm, int lineSpacing, List<Glyph> glyphs, List<CharacterMap> cmaps, HorizontalMetrics horizontalMetrics)
         {
             _bounds = bounds;
             _unitsPerEm = unitsPerEm;
+            _lineSpacing = lineSpacing;
             _glyphs = glyphs;
             _cmaps = cmaps;
             _horizontalMetrics = horizontalMetrics;
@@ -36,6 +38,7 @@ namespace NRasterizer
             return _horizontalMetrics.GetAdvanceWidth(LookupIndex(character));
         }
 
+        public int LineSpacing {get { return _lineSpacing; } }
         public Bounds Bounds { get { return _bounds; } }
         public ushort UnitsPerEm { get { return _unitsPerEm; } }
         public List<Glyph> Glyphs { get { return _glyphs; } }

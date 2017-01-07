@@ -52,7 +52,7 @@ namespace NRasterizer.CLI
 
         private void DrawSoft(FileInfo fontPath, FileInfo target, string text)
         {
-            var lineCount = text.Where(c => c == '\n').Count() + 1;
+            var lineCount = text.Count(c => c == '\n') + 1;
             const int width = 200;
             int height = 80 * lineCount;
             const int resolution = 72;
@@ -81,7 +81,7 @@ namespace NRasterizer.CLI
 
         private void DrawGDI(FileInfo fontPath, FileInfo target, string text, bool drawbox)
         {
-            var lineCount = text.Where(c => c == '\n').Count() + 1;
+            var lineCount = text.Count(c => c == '\n') + 1;
             const int width = 200;
             int height = 80 * lineCount;
             const int resolution = 72;

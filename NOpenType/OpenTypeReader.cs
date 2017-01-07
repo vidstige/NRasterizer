@@ -44,12 +44,13 @@ namespace NRasterizer
                 var cmaps = CmapReader.From(FindTable(tables, "cmap"));
 
                 var horizontalHeader = HorizontalHeader.From(FindTable(tables, "hhea"));
+                var metricsTable = MetricsTable.From(FindTable(tables, "OS/2"));
+
                 var horizontalMetrics = HorizontalMetrics.From(FindTable(tables, "hmtx"),
                     horizontalHeader.HorizontalMetricsCount, maximumProfile.GlyphCount);
 
-                return new Typeface(header.Bounds, header.UnitsPerEm, glyphs, cmaps, horizontalMetrics);
+                return new Typeface(header.Bounds, header.UnitsPerEm, metricsTable.LineSpacing, glyphs, cmaps, horizontalMetrics);
             }
         }
-
     }
 }

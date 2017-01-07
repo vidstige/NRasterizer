@@ -92,7 +92,7 @@ namespace NRasterizer.Tests
 
             var cmap = CreateCharacterMap(characters);
             var h_metrics = new HorizontalMetrics(letterWidths.ToArray(), leftSideBearings.ToArray());
-            return new Typeface(new Bounds(0, 0, (short)lettersize, (short)lettersize), 1, glyphs, new[] { cmap }.ToList(), h_metrics);
+            return new Typeface(new Bounds(0, 0, (short)lettersize, (short)lettersize), 1, lettersize, glyphs, new[] { cmap }.ToList(), h_metrics);
         }
     }
 }

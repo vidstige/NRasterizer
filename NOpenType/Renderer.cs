@@ -257,12 +257,11 @@ namespace NRasterizer
             //we are working a font sizes in here
             //convert from pixel sizes to font sizes
             int scalingFactor = ScalingFactor(options.FontSize);
-            int xx = (int)(x * FontToPixelDivisor) / scalingFactor;
-            int yy = (int)(y * FontToPixelDivisor) / scalingFactor;
+            int xx = (x * FontToPixelDivisor) / scalingFactor;
+            int yy = (y * FontToPixelDivisor) / scalingFactor;
             int startXX = xx;
-            
-            // this will need looking at as I don't know if there somethign inside a font that should tell us the real base lineheight, this renders nicely in my tests.
-            int lineHeight = (int)(EmSquare.Size * options.LineHeight);
+
+            int lineHeight = (int)Math.Round(_typeface.LineSpacing * options.LineHeight);
 
             foreach (var character in text)
             {
