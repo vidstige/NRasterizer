@@ -14,6 +14,15 @@ namespace NRasterizer.Tests
         [InlineData("Hello World", 64, 704, 64)] //pixel size == font size in these tests
         [InlineData("Hello", 10, 50, 10)] //pixel size == font size in these tests
         [InlineData("World", 10, 50, 10)] //pixel size == font size in these tests
+
+        // \n is treated as carage return followed by newline in both unix and windows
+        // technically in windows \n should retian the current x position and just move down by line height.
+        // \r will just return to start of current line
+        [InlineData("Hi\nWorld", 10, 50, 20)] // moves to newline(which will also reset the line start)
+        [InlineData("Hello\nMe", 10, 50, 20)]  // moves to newline(which will also reset the line start)
+        [InlineData("Hi\r\nWorld", 10, 50, 20)]  // reset the single line the moves to newline(which will also reset the line start)
+        [InlineData("Hello\r\nMe", 10, 50, 20)] // reset the single line the moves to new line
+        [InlineData("Hello\rMe", 10, 50, 10)] // sticks to single line but reset the start of line
         public void MesureText(string text, int fontSize, int expectedWidth, int expectedHeight)
         {
             // the default test factory will end up faking out spacing for a monospaced font.
@@ -21,7 +30,8 @@ namespace NRasterizer.Tests
 
             var options = new TextOptions()
             {
-                FontSize = fontSize
+                FontSize = fontSize,
+                LineHeight = 1,
             };
 
             var size = renderer.Measure(text, options);
@@ -37,7 +47,7 @@ namespace NRasterizer.Tests
         [Theory]
         [InlineData("a", 10, 10, 10, 20, 20)] 
         [InlineData("ab", 1, 10, 10, 12, 11)] 
-        [InlineData("a\nb", 1, 10, 10, 13, 11)] // this will break once newline support is added.
+        [InlineData("a\nb", 5, 10, 10, 15, 20)]
         [InlineData("a\tb", 1, 10, 10, 13, 11)] // this will break once tab support is added.
         public void RenderText(string text, int fontsize, int startX, int startY, int lastX, int lastY)
         {
@@ -49,7 +59,8 @@ namespace NRasterizer.Tests
 
             var options = new TextOptions()
             {
-                FontSize = fontsize
+                FontSize = fontsize,
+                LineHeight = 1
             };
 
             renderer.Render(startX, startY, text, options);

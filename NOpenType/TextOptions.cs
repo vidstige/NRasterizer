@@ -26,7 +26,7 @@ namespace NRasterizer
         /// <value>
         /// The height of the line.
         /// </value>
-        public float LineHeight { get; set; } = 1;
+        public float LineHeight { get; set; } = 1f; 
     }
 }
 

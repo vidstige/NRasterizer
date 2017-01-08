@@ -54,7 +54,7 @@ namespace NRasterizer.IO
         public override short ReadInt16() { return (short)SwapBytes(base.ReadUInt16()); }
         public override int ReadInt32() { throw new NotImplementedException(); }
         public override long ReadInt64() { throw new NotImplementedException(); }
-        public override sbyte ReadSByte() { throw new NotImplementedException(); }
+        public override sbyte ReadSByte() { return base.ReadSByte(); }
         public override float ReadSingle() { throw new NotImplementedException(); }
         public override string ReadString() { throw new NotImplementedException(); }
         public override ushort ReadUInt16() { return SwapBytes(base.ReadUInt16()); }

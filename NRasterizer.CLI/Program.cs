@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using NRasterizer.Rasterizer;
+using System.Linq;
 
 namespace NRasterizer.CLI
 {
@@ -51,8 +52,9 @@ namespace NRasterizer.CLI
 
         private void DrawSoft(FileInfo fontPath, FileInfo target, string text)
         {
+            var lineCount = text.Count(c => c == '\n') + 1;
             const int width = 200;
-            const int height = 80;
+            int height = 80 * lineCount;
             const int resolution = 72;
             var options = new TextOptions()
             {
@@ -79,8 +81,9 @@ namespace NRasterizer.CLI
 
         private void DrawGDI(FileInfo fontPath, FileInfo target, string text, bool drawbox)
         {
+            var lineCount = text.Count(c => c == '\n') + 1;
             const int width = 200;
-            const int height = 80;
+            int height = 80 * lineCount;
             const int resolution = 72;
             var options = new TextOptions()
             {
@@ -133,6 +136,7 @@ namespace NRasterizer.CLI
         private static string UnescapeWhitespace(string str)
         {
             return str
+                .Replace("\\r", "\r")
                 .Replace("\\n", "\n")
                 .Replace("\\t", "\t");
         }
