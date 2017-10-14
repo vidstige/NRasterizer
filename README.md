@@ -1,6 +1,7 @@
 # NRasterizer ![icon](icon.png "NOpenType icon")
 
 ![build-status](https://travis-ci.org/vidstige/NRasterizer.svg?branch=master) [![Build status](https://ci.appveyor.com/api/projects/status/0gg08fxwjrvtg6r1/branch/master?svg=true)](https://ci.appveyor.com/project/vidstige/nrasterizer/branch/master)
+[![first-timers-friendly](http://img.shields.io/badge/first--timers--only-friendly-green.svg?style=flat&colorB=FF69B4)](http://www.firsttimersonly.com/)
 
 Simple and clean TrueType font loader and renderer written purely in c#.
 
